@@ -2,8 +2,9 @@ import { useRef } from 'react'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { publicAsset } from '../publicAsset'
 
-const ASSET_PATH = '/assets/promo'
+const ASSET_PATH = publicAsset('assets/promo')
 const DETAILS_OVERLAP = 26
 const COPY_SCROLL_DISTANCE = 0.7
 const COPY_SCROLL_SCALE = 0.94

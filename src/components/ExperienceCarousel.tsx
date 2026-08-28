@@ -2,8 +2,9 @@ import { useRef, useState, type KeyboardEvent } from 'react'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { publicAsset } from '../publicAsset'
 
-const FEATURE_PATH = '/assets/features'
+const FEATURE_PATH = publicAsset('assets/features')
 const CARD_GAP = 4
 const STACK_STEP = 8
 const ENTRANCE_SCROLL_RATIO = 0.15

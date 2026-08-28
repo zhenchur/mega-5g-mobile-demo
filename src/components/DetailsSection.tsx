@@ -3,8 +3,9 @@ import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { ExperienceCarousel } from './ExperienceCarousel'
+import { publicAsset } from '../publicAsset'
 
-const FEATURE_PATH = '/assets/features'
+const FEATURE_PATH = publicAsset('assets/features')
 const DETAILS_OVERLAP = 26
 const ENTRANCE_VIEWPORT_INSET = 15
 

@@ -1,11 +1,12 @@
 import { MobileExperience } from './components/MobileExperience'
+import { publicAsset } from './publicAsset'
 
 function DesktopGate() {
   return (
     <main className="desktop-gate">
       <img
         className="desktop-gate__logo"
-        src="/assets/promo/megafon-logo.svg"
+        src={publicAsset('assets/promo/megafon-logo.svg')}
         alt="МегаФон"
         width="169"
         height="30"

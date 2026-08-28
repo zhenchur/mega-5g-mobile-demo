@@ -1,8 +1,9 @@
 import { useRef, useState } from 'react'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
+import { publicAsset } from '../publicAsset'
 
-const CONNECT_PATH = '/assets/connect'
+const CONNECT_PATH = publicAsset('assets/connect')
 const STEP_ICON_OFFSET = 30.572
 const VISIBLE_STEP_COUNT = 3
 const AXIS_LOCK_THRESHOLD = 10

@@ -2,8 +2,9 @@ import { useRef } from 'react'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { publicAsset } from '../publicAsset'
 
-const PRODUCT_PATH = '/assets/products'
+const PRODUCT_PATH = publicAsset('assets/products')
 const PRODUCT_PLACEHOLDER = `${PRODUCT_PATH}/profile-kino.webp`
 const FIRST_STACK_START = 0.12
 const STACK_INTERVAL = 0.78

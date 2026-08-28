@@ -1,4 +1,6 @@
-const FOOTER_PATH = '/assets/footer'
+import { publicAsset } from '../publicAsset'
+
+const FOOTER_PATH = publicAsset('assets/footer')
 
 const navigation = ['Связь', 'Услуги и опции', 'Развлечения', 'Поддержка', 'Интернет‑магазин', 'Самозанятым', 'Бизнесу', 'О компании']
 const socialIcons = ['social-vk.svg', 'social-ok.svg', 'social-youtube.svg', 'social-service.svg', 'social-telegram.svg']
