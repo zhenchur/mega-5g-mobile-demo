@@ -1,0 +1,14 @@
+.desktop-experience {
+  display: none;
+  min-width: 1280px;
+  min-height: 100vh;
+  overflow-x: clip;
+  color: #333;
+  background: #f2f4f7;
+}
+
+@media (min-width: 1280px) {
+  .desktop-experience {
+    display: block;
+  }
+}

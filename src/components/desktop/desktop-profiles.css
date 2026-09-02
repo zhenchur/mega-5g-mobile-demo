@@ -1,0 +1,352 @@
+.desktop-profiles {
+  position: relative;
+  z-index: 1;
+  padding: 96px 48px;
+  background: #f2f4f7;
+}
+
+.desktop-profiles__inner {
+  display: flex;
+  width: min(100%, 1064px);
+  flex-direction: column;
+  align-items: center;
+  gap: 48px;
+  margin-inline: auto;
+}
+
+.desktop-profiles__title {
+  margin: 0;
+  color: #333;
+  font-size: 32px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  line-height: 40px;
+  text-align: center;
+}
+
+.desktop-profiles__cards {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.desktop-profile-card {
+  display: grid;
+  width: 100%;
+  height: 440px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  overflow: hidden;
+  border-radius: 24px;
+  background: #fff;
+}
+
+.desktop-profile-card__content {
+  display: flex;
+  min-width: 0;
+  height: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 32px;
+}
+
+.desktop-profile-card__content--timed {
+  gap: 32px;
+  justify-content: flex-start;
+}
+
+.desktop-profile-card__summary {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.desktop-profile-card__copy {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.desktop-profile-card__title-row {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.desktop-profile-card__title {
+  min-width: 0;
+  margin: 0;
+  color: #333;
+  font-size: 40px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  line-height: 44px;
+  white-space: nowrap;
+}
+
+.desktop-profile-card__price-tags {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 4px;
+}
+
+.desktop-profile-card__price,
+.desktop-profile-card__period {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 18px;
+  white-space: nowrap;
+}
+
+.desktop-profile-card__price {
+  color: #314138;
+  background: rgb(0 185 86 / 40%);
+  font-weight: 500;
+}
+
+.desktop-profile-card__period {
+  border: 1px solid rgb(0 185 86 / 40%);
+  color: rgb(0 0 0 / 80%);
+  font-weight: 400;
+}
+
+.desktop-profile-card__description {
+  width: 100%;
+  max-width: 370px;
+  margin: 0;
+  color: #0e0e0e;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 24px;
+}
+
+.desktop-profile-card__badges {
+  display: flex;
+  width: 100%;
+  max-width: 370px;
+  min-height: 56px;
+  align-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.desktop-profile-card__badge {
+  display: inline-flex;
+  min-height: 26px;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 16px;
+  overflow: hidden;
+  border-radius: 32px;
+  color: #616c82;
+  background: #f2f4f7;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.desktop-profile-card__badges--single-row {
+  min-height: 26px;
+}
+
+.desktop-profile-card__actions {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.desktop-profile-card__button {
+  display: inline-flex;
+  min-height: 52px;
+  align-items: center;
+  justify-content: center;
+  padding: 13px 31px;
+  border: 1px solid #333;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 24px;
+  text-align: center;
+}
+
+.desktop-profile-card__button--primary {
+  color: #fff;
+  background: #333;
+}
+
+.desktop-profile-card__button--secondary {
+  color: #333;
+  background: transparent;
+}
+
+.desktop-profile-card__button:focus-visible,
+.desktop-profile-card__duration-input:focus-visible + .desktop-profile-card__duration-main {
+  outline: 3px solid rgb(0 185 86 / 45%);
+  outline-offset: 3px;
+}
+
+.desktop-profile-card__visual {
+  position: relative;
+  min-width: 0;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 24px;
+  background:
+    linear-gradient(-79.356deg, rgb(143 168 216 / 30%) 0.272%, rgb(255 255 255 / 30%) 99.565%),
+    #e9ebf0;
+}
+
+.desktop-profile-card__image {
+  position: absolute;
+  display: block;
+  max-width: none;
+  object-fit: cover;
+  pointer-events: none;
+  user-select: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .desktop-profile-card__image {
+    transform-origin: 50% 50%;
+    transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .desktop-profile-card:has(.desktop-profile-card__button:focus-visible)
+    > .desktop-profile-card__visual
+    > .desktop-profile-card__image {
+    transform: scale(1.04);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .desktop-profile-card:has(.desktop-profile-card__button:hover)
+    > .desktop-profile-card__visual
+    > .desktop-profile-card__image {
+    transform: scale(1.04);
+  }
+}
+
+.desktop-profile-card__image--cinema {
+  top: -39px;
+  left: -206px;
+  width: 944px;
+  height: 531px;
+}
+
+.desktop-profile-card__image--city {
+  top: 0;
+  left: calc(50% - 363px);
+  width: 800px;
+  height: 450px;
+}
+
+.desktop-profile-card__image--speed {
+  top: 0;
+  left: calc(50% - 388px);
+  width: 844px;
+  height: 474px;
+}
+
+.desktop-profile-card__image--timed {
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.desktop-profile-card__duration-group {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  flex: 1 1 auto;
+  align-items: stretch;
+  gap: 4px;
+  padding: 0;
+  border: 0;
+  margin: 0;
+}
+
+.desktop-profile-card__duration {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  flex: 1 1 0;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 12px;
+  overflow: hidden;
+  border-radius: 16px;
+  color: #8f96a4;
+  background: #f9f8fa;
+  cursor: pointer;
+}
+
+.desktop-profile-card__duration-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  border: 0;
+  margin: -1px;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.desktop-profile-card__duration-main {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  border-radius: 4px;
+}
+
+.desktop-profile-card__duration-label {
+  min-width: 0;
+  color: #333;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 18px;
+  white-space: nowrap;
+}
+
+.desktop-profile-card__duration-radio {
+  display: block;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+}
+
+.desktop-profile-card__duration-price {
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 24px;
+  white-space: nowrap;
+}
+
+.desktop-profile-card__duration--selected {
+  color: #333;
+}

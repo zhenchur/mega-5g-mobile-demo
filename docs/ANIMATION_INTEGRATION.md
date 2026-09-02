@@ -1,9 +1,9 @@
 # MEGA 5G: интеграция анимаций
 
-- Версия документа: 1.1
-- Статус: сверен с текущей демкой 28 августа 2026
-- Референсный viewport: iPhone 13, portrait, 390 × 844 CSS px
-- Исходный стек: React 19, TypeScript, GSAP 3.15, @gsap/react 2.1, ScrollTrigger
+- Версия документа: 1.2
+- Статус: сверен с текущей демкой 2 сентября 2026
+- Референсные viewport: iPhone 13 portrait, 390 × 844 CSS px; desktop, 1440 px по ширине
+- Исходный стек: React 19, TypeScript, GSAP 3.15, @gsap/react 2.1, ScrollTrigger, Lenis 1.3.26
 
 > **Критическая граница передачи.** Это демо сценариев, динамики и принципов анимации, а не production-верстка. Текущие DOM, CSS, абсолютные размеры и визуальные стили нельзя считать кодом для прямого переноса. Их нужно заново реализовать в продуктовой архитектуре и дизайн-системе, используя этот документ и исходники только как поведенческий референс.
 
@@ -16,7 +16,7 @@
 1. Установить зависимости:
 
    ~~~bash
-   npm install gsap @gsap/react
+   npm install gsap @gsap/react lenis
    ~~~
 
 2. Воссоздать механику внутри продуктовых компонентов. Исходные компоненты и CSS использовать для изучения последовательности, но не копировать как production-верстку.
@@ -42,6 +42,7 @@
 | Зона | Компонент | Механика | Управление | Где активна |
 |---|---|---|---|---|
 | Hero / promo | [PromoSection.tsx](../src/components/PromoSection.tsx) | масштаб орбиты, сдвиг offer, исчезновение title | ScrollTrigger: scrub + дискретный trigger | код ≤767 px; приемка 390 × 844 |
+| Desktop hero / intro | [DesktopIntro.tsx](../src/components/desktop/DesktopIntro.tsx) | pin hero, масштаб изображения, fade/подъем copy, раскрытие следующей поверхности | единый ScrollTrigger scrub | ≥1280 px; приемка 1280 и 1440 px |
 | Details mask | [DetailsSection.tsx](../src/components/DetailsSection.tsx) | горизонтальное раскрытие с counter-scale | ScrollTrigger scrub | код ≤767 px; приемка 390 × 844 |
 | Experience cards | [ExperienceCarousel.tsx](../src/components/ExperienceCarousel.tsx) | 3D-вход, paging и стек карточек | ScrollTrigger + swipe + keyboard | ≤767 px |
 | Technology cards | [DetailsSection.tsx](../src/components/DetailsSection.tsx) | 3D flip/depth entrance | отдельный ScrollTrigger на карточку | код ≤767 px; приемка 390 × 844 |
@@ -106,6 +107,18 @@ MobileExperience
 | Connect icon step | 30.572 px | timeline и CSS initial positions |
 
 При изменении одного из этих значений обновить все связанные места. Лучший продуктовый вариант — вынести значения в единый animation-config и, где возможно, передавать CSS-токены через custom properties.
+
+### 3.2. Desktop smooth scroll
+
+Lenis монтируется вместе с <code>DesktopExperience</code> только при ширине от 1280 px. Используется root/window-режим с нативным scroll, поэтому <code>ScrollTrigger.scrollerProxy()</code> не нужен и viewport pin продолжает работать штатно.
+
+- <code>autoRaf: false</code>: Lenis получает время из единого <code>gsap.ticker</code>;
+- <code>lerp: 0.1</code> и <code>smoothWheel: true</code> задают инерцию колеса/трекпада;
+- <code>lenis.on('scroll', ScrollTrigger.update)</code> синхронизирует scroll-триггеры;
+- <code>respectReducedMotion: true</code> оставляет нативный 1:1 scroll при системном reduce;
+- touch не синхронизируется и mobile-tree не получает Lenis;
+- локальные hash-ссылки передаются в <code>lenis.scrollTo()</code>;
+- cleanup снимает scroll/click listeners, удаляет callback ticker, вызывает <code>destroy()</code> и возвращает стандартный GSAP lag smoothing.
 
 ## 4. Базовый React/GSAP-контракт
 
@@ -240,6 +253,42 @@ Reduced-motion: обе JS-анимации не создаются, исходн
 - CTA демо ведет на существующий <code>#profiles</code>; в продукте заменить его на согласованный route/action;
 - Promo сам не инициирует fonts-ready refresh и в текущей композиции зависит от refresh из DetailsSection;
 - при reduced-motion постоянный will-change у hero image, title и offer CSS не сбрасывает.
+
+### 5.5. Desktop hero / intro
+
+Источник: [DesktopIntro.tsx](../src/components/desktop/DesktopIntro.tsx), CSS [desktop-intro.css](../src/components/desktop/desktop-intro.css).
+
+Сценарий активен при <code>min-width: 1280px</code> и <code>prefers-reduced-motion: no-preference</code>. Header, breadcrumbs и hero находятся в одном <code>.desktop-intro__motion-stage</code>, который фиксируется от верхней границы страницы на один текущий viewport. Следующая белая поверхность поднимается отдельным абсолютным слоем и физически перекрывает header, copy и breadcrumbs без самостоятельного fade шапки.
+
+ScrollTrigger:
+
+| Параметр | Значение |
+|---|---|
+| trigger / pin | <code>.desktop-intro__motion-stage</code> |
+| start | <code>top top</code> |
+| end | <code>+=window.innerHeight</code> |
+| scrub | 0.25 s |
+| invalidateOnRefresh | true |
+
+Единая timeline:
+
+| Target | From | To | Timeline |
+|---|---|---|---:|
+| white surface | y = header height + hero height − 32 px; clip inset 50 px | y 0; clip inset 0 | 0–1 |
+| hero image | scale 1 | scale 1.25 | 0–1 |
+| heading + subline + CTA | y 0; autoAlpha 1 | y −48 px; autoAlpha 0 | 0.04–0.72 |
+
+Верхние углы поверхности сохраняют радиус 32 px на всем пути. Для расширения используется <code>clip-path: inset()</code>, поэтому внутренний контент не растягивается. GSAP двигает вложенные image/copy-слои, не перезаписывая их CSS-центровку. При reverse все значения возвращаются точно в исходное состояние.
+
+Карточки внутри поверхности получают две автоматические entrance-группы. Их trigger-координаты вычисляются в шкале hero pin, потому что обычный viewport-trigger не учитывает движение абсолютной поверхности внутри зафиксированного stage:
+
+- benefits начинают вход после пересечения верхней гранью линии 85% viewport, но не раньше 16 px после начала pin: короткий reset-зазор позволяет перезапустить entrance при возврате в начало страницы; stagger 0.1 s;
+- technology-карточки начинают вход при пересечении той же линии 85% viewport; stagger 0.06 s;
+- обе группы: <code>autoAlpha 0 → 1</code>, <code>rotationX −68° → 0</code>, <code>z −36 → 0</code>, perspective 900, origin <code>50% 0%</code>, duration 0.84 s, ease <code>power3.out</code>;
+- <code>toggleActions: play none none reverse</code>, поэтому при возврате выше своей точки группа плавно складывается обратно;
+- каждая группа использует один ScrollTrigger и один tween со stagger вместо отдельного trigger на каждую карточку.
+
+Reduced-motion: JS-сценарий и pin не создаются; остается статическая композиция hero → поверхность с нахлестом 32 px.
 
 ## 6. Зона 2 — раскрытие Details
 

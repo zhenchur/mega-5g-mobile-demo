@@ -1610,7 +1610,7 @@ img {
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 768px) and (max-width: 1279px) {
   .mobile-experience {
     display: none;
   }
@@ -1683,5 +1683,20 @@ img {
     color: #60656d;
     font-size: 20px;
     line-height: 28px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .mobile-experience,
+  .desktop-gate {
+    display: none;
+  }
+
+  html {
+    scroll-padding-top: 101px;
+  }
+
+  body {
+    background: #f2f4f7;
   }
 }
