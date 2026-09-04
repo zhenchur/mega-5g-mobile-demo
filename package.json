@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "deploy:pages": "npm run build:pages && gh-pages -d dist --nojekyll",
     "typecheck": "tsc --noEmit",
-    "check": "npm run build"
+    "check": "npm run build",
+    "preview:pages": "vite preview --mode github-pages"
   },
   "engines": {
     "node": "^20.19.0 || >=22.12.0"

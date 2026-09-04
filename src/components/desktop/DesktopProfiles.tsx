@@ -3,128 +3,193 @@ import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { publicAsset } from '../../publicAsset'
+import { NESTED_CARD_REVEAL } from '../../motion/cardReveal'
+import { createDesktopCardReveal, DESKTOP_CARD_REVEAL_START, DESKTOP_CARD_REVEAL_TIMING } from './desktopCardReveal'
 import './desktop-profiles.css'
 
 gsap.registerPlugin(useGSAP, ScrollTrigger)
 
+const profileAsset = (filename: string) => publicAsset('assets/desktop/final/profiles/' + filename)
+const turboBadge = '4 слота турбо-ускорения в 2 раза'
+
 type StandardProfile = {
-  title: string
+  id: string
+  title: ReactNode
+  accessibleTitle: string
   description: ReactNode
   price: string
+  oldPrice?: string
   badges: string[]
   image: string
-  imageClassName: string
 }
 
 const standardProfiles: StandardProfile[] = [
   {
-    title: 'Кино',
-    description: (
-      <>
-        Фильмы и сериалы без пауз
-        <br />и в высоком качестве
-      </>
-    ),
-    price: '299 ₽',
-    badges: ['Ускорение 60%', 'START', '+20 ГБ', 'Видео до 4K', 'Без ожидания'],
-    image: 'assets/desktop/profiles/profile-cinema.png',
-    imageClassName: 'desktop-profile-card__image--cinema',
+    id: 'base',
+    title: <>Мега 5G<br />Базовый</>,
+    accessibleTitle: 'Мега 5G Базовый',
+    description: 'Для тех, кому просто нужна высокая скорость',
+    price: '199 ₽',
+    oldPrice: '249 ₽',
+    badges: [turboBadge],
+    image: 'profile-base.png',
   },
   {
-    title: 'Город',
+    id: 'city',
+    title: 'Для города',
+    accessibleTitle: 'Для города',
     description: 'Настройки интернета для активных горожан',
-    price: '219 ₽',
-    badges: ['Ускорение 60%', 'Whoosh', '+25 ГБ', 'Безлимит на самокаты и карты'],
-    image: 'assets/desktop/profiles/profile-city.png',
-    imageClassName: 'desktop-profile-card__image--city',
+    price: '219',
+    badges: ['+50 ГБ', 'Подписка Whoosh', '+100 SMS', 'Безлимиты на городские карты', turboBadge],
+    image: 'profile-city.png',
   },
   {
-    title: 'Ускорение',
-    description: (
-      <>
-        Высокая скорость интернета,
-        <br />даже когда сеть перегружена
-      </>
-    ),
-    price: '219 ₽',
-    badges: ['Ускорение 60%', '100% ускорение на 3 часа'],
-    image: 'assets/desktop/profiles/profile-speed.png',
-    imageClassName: 'desktop-profile-card__image--speed',
+    id: 'cinema',
+    title: 'Для кино и видео',
+    accessibleTitle: 'Для кино и видео',
+    description: <>Фильмы и сериалы без пауз<br />и в высоком качестве</>,
+    price: '219',
+    badges: ['+50 ГБ', 'Подписка Whoosh', '+100 SMS', 'Безлимиты на городские карты', turboBadge],
+    image: 'profile-cinema.png',
   },
 ]
 
 const durationOptions = [
-  { id: '6-hours', label: 'на 6 часов', price: '129 ₽' },
-  { id: '12-hours', label: 'на 12 часов', price: '139 ₽' },
-  { id: '24-hours', label: 'на 24 часа', price: '149 ₽' },
+  { id: '6-hours', label: '6 часов', price: '120 ₽' },
+  { id: '12-hours', label: '12 часов', price: '190 ₽' },
+  { id: '24-hours', label: '24 часа', price: '190 ₽' },
 ]
 
-function ProfileActions({ profileTitle }: { profileTitle: string }) {
+function SpeedTag() {
+  return (
+    <span className="desktop-profile-card__speed" aria-label="Скорость 1,6 раза">
+      <span>Скорость</span>
+      <img src={profileAsset('speed-factor.svg')} alt="" width="22" height="20" />
+    </span>
+  )
+}
+
+function ProfileActions({ profileTitle, dark = false }: { profileTitle: string; dark?: boolean }) {
   return (
     <div className="desktop-profile-card__actions">
       <button
         className="desktop-profile-card__button desktop-profile-card__button--primary"
         type="button"
-        aria-label={`Подключить профиль «${profileTitle}»`}
+        aria-label={'Подключить профиль «' + profileTitle + '»'}
       >
         Подключить
       </button>
       <button
         className="desktop-profile-card__button desktop-profile-card__button--secondary"
         type="button"
-        aria-label={`Подробнее о профиле «${profileTitle}»`}
+        aria-label={'Подробнее о профиле «' + profileTitle + '»'}
       >
-        Подробнее
+        <img src={profileAsset('arrow-' + (dark ? 'dark' : 'light') + '.svg')} alt="" width="20" height="20" />
       </button>
     </div>
   )
 }
 
-function PriceTags({ price }: { price: string }) {
+function ProfileBadges({ badges }: { badges: string[] }) {
   return (
-    <div className="desktop-profile-card__price-tags" aria-label={`${price} за 30 дней`}>
-      <span className="desktop-profile-card__price">{price}</span>
-      <span className="desktop-profile-card__period">за 30 дней</span>
-    </div>
+    <ul className="desktop-profile-card__badges" aria-label="Возможности профиля">
+      {badges.map((badge, index) => (
+        <li
+          className={'desktop-profile-card__badge' + (index === 0 ? ' desktop-profile-card__badge--compact' : '')}
+          key={badge}
+        >
+          {badge}
+        </li>
+      ))}
+    </ul>
   )
 }
 
 function StandardProfileCard({ profile }: { profile: StandardProfile }) {
   return (
-    <article className="desktop-profile-card">
+    <article className={'desktop-profile-card desktop-profile-card--' + profile.id}>
       <div className="desktop-profile-card__content">
         <div className="desktop-profile-card__summary">
           <div className="desktop-profile-card__copy">
             <div className="desktop-profile-card__title-row">
               <h3 className="desktop-profile-card__title">{profile.title}</h3>
-              <PriceTags price={profile.price} />
+              <SpeedTag />
             </div>
             <p className="desktop-profile-card__description">{profile.description}</p>
           </div>
-
-          <ul
-            className={`desktop-profile-card__badges${profile.badges.length <= 2 ? ' desktop-profile-card__badges--single-row' : ''}`}
-            aria-label="Возможности профиля"
-          >
-            {profile.badges.map((badge) => (
-              <li className="desktop-profile-card__badge" key={badge}>
-                {badge}
-              </li>
-            ))}
-          </ul>
+          <ProfileBadges badges={profile.badges} />
         </div>
 
-        <ProfileActions profileTitle={profile.title} />
+        <div className="desktop-profile-card__purchase">
+          <div className="desktop-profile-card__price-tags">
+            <span className="desktop-profile-card__price">{profile.price}</span>
+            {profile.oldPrice && <s className="desktop-profile-card__old-price">{profile.oldPrice}</s>}
+            <span className="desktop-profile-card__period">за 30 дней</span>
+          </div>
+          <ProfileActions profileTitle={profile.accessibleTitle} />
+        </div>
       </div>
 
       <div className="desktop-profile-card__visual" aria-hidden="true">
         <img
-          className={`desktop-profile-card__image ${profile.imageClassName}`}
-          src={publicAsset(profile.image)}
+          className="desktop-profile-card__image"
+          src={profileAsset(profile.image)}
           alt=""
+          width="3200"
+          height="1800"
           loading="lazy"
           decoding="async"
         />
+      </div>
+    </article>
+  )
+}
+
+function BoostIcon({ shape, glyph }: { shape: string; glyph: string }) {
+  return (
+    <span className="desktop-profile-boost__icon">
+      <img className="desktop-profile-boost__icon-base" src={profileAsset('boost-' + shape + '.svg')} alt="" width="48" height="48" />
+      <img className={'desktop-profile-boost__glyph desktop-profile-boost__glyph--' + glyph} src={profileAsset('boost-' + glyph + '.svg')} alt="" />
+    </span>
+  )
+}
+
+function ExtraBoostCard() {
+  return (
+    <article className="desktop-profile-card desktop-profile-boost" aria-labelledby="desktop-profile-boost-title">
+      <h3 id="desktop-profile-boost-title">
+        А если и этого мало, в каждом<br />
+        профиле есть дополнительное<br />
+        ускорение
+      </h3>
+      <div className="desktop-profile-boost__items">
+        <div className="desktop-profile-boost__item-rise">
+          <div className="desktop-profile-boost__item">
+            <p>Активируйте турбо-режим<br />на 3 часа</p>
+            <div className="desktop-profile-boost__icons" aria-hidden="true">
+              <BoostIcon shape="circle" glyph="arrow" />
+              <BoostIcon shape="square" glyph="hand" />
+            </div>
+          </div>
+        </div>
+        <div className="desktop-profile-boost__item-rise">
+          <div className="desktop-profile-boost__item">
+            <p>4 бесплатных слота в месяц,<br />далее – 49 ₽ за раз</p>
+            <div className="desktop-profile-boost__icons" aria-hidden="true">
+              <BoostIcon shape="circle" glyph="slots" />
+              <BoostIcon shape="hexagon" glyph="bag" />
+            </div>
+          </div>
+        </div>
+        <div className="desktop-profile-boost__item-rise">
+          <div className="desktop-profile-boost__item">
+            <p>Скорость ещё выше, почти вдвое от стандартной</p>
+            <div className="desktop-profile-boost__icons" aria-hidden="true">
+              <BoostIcon shape="circle" glyph="chart" />
+              <BoostIcon shape="diamond" glyph="rocket" />
+            </div>
+          </div>
+        </div>
       </div>
     </article>
   )
@@ -136,58 +201,62 @@ function TimedProfileCard() {
   return (
     <article className="desktop-profile-card desktop-profile-card--timed">
       <div className="desktop-profile-card__content desktop-profile-card__content--timed">
-        <div className="desktop-profile-card__copy">
-          <div className="desktop-profile-card__title-row">
-            <h3 className="desktop-profile-card__title">Ускорение на время</h3>
+        <div className="desktop-profile-card__summary">
+          <div className="desktop-profile-card__copy">
+            <div className="desktop-profile-card__title-row">
+              <h3 className="desktop-profile-card__title">Мегаскорость</h3>
+              <SpeedTag />
+            </div>
+            <p className="desktop-profile-card__description">
+              Во время важного звонка или если хочется посмотреть фильм в высоком качестве
+            </p>
           </div>
-          <p className="desktop-profile-card__description">
-            Турбоускорение в 2 раза, когда нужна
-            <br />максимальная скорость на некоторое время
-          </p>
+          <ProfileBadges badges={[turboBadge]} />
         </div>
 
         <fieldset className="desktop-profile-card__duration-group">
           <legend className="visually-hidden">Выберите длительность ускорения</legend>
           {durationOptions.map((option) => {
             const isSelected = selectedDuration === option.id
-
             return (
-              <label
-                className={`desktop-profile-card__duration${isSelected ? ' desktop-profile-card__duration--selected' : ''}`}
-                key={option.id}
-              >
-                <input
-                  className="desktop-profile-card__duration-input"
-                  type="radio"
-                  name="desktop-profile-duration"
-                  value={option.id}
-                  checked={isSelected}
-                  onChange={() => setSelectedDuration(option.id)}
-                />
-                <span className="desktop-profile-card__duration-main">
-                  <span className="desktop-profile-card__duration-label">{option.label}</span>
-                  <img
-                    className="desktop-profile-card__duration-radio"
-                    src={publicAsset(
-                      `assets/desktop/profiles/radio-${isSelected ? 'checked' : 'unchecked'}.svg`,
-                    )}
-                    alt=""
+              <div className="desktop-profile-card__duration-rise" key={option.id}>
+                <label
+                  className={'desktop-profile-card__duration' + (isSelected ? ' desktop-profile-card__duration--selected' : '')}
+                >
+                  <input
+                    className="desktop-profile-card__duration-input"
+                    type="radio"
+                    name="desktop-profile-duration"
+                    value={option.id}
+                    checked={isSelected}
+                    onChange={() => setSelectedDuration(option.id)}
                   />
-                </span>
-                <span className="desktop-profile-card__duration-price">{option.price}</span>
-              </label>
+                  <span className="desktop-profile-card__duration-main">
+                    <span className="desktop-profile-card__duration-label">{option.label}</span>
+                    <img
+                      className="desktop-profile-card__duration-radio"
+                      src={profileAsset('radio-' + (isSelected ? 'checked' : 'unchecked') + '.svg')}
+                      alt=""
+                      width="32"
+                      height="32"
+                    />
+                  </span>
+                  <span className="desktop-profile-card__duration-price">{option.price}</span>
+                </label>
+              </div>
             )
           })}
         </fieldset>
 
-        <ProfileActions profileTitle="Ускорение на время" />
+        <ProfileActions profileTitle="Мегаскорость" dark />
       </div>
-
       <div className="desktop-profile-card__visual" aria-hidden="true">
         <img
           className="desktop-profile-card__image desktop-profile-card__image--timed"
-          src={publicAsset('assets/desktop/profiles/profile-timed-speed.png')}
+          src={profileAsset('profile-megaspeed.png')}
           alt=""
+          width="3200"
+          height="1800"
           loading="lazy"
           decoding="async"
         />
@@ -196,72 +265,124 @@ function TimedProfileCard() {
   )
 }
 
+function ProfileReveal({ children }: { children: ReactNode }) {
+  return (
+    <div className="desktop-profile-reveal">
+      <div className="desktop-profile-reveal__rise">{children}</div>
+    </div>
+  )
+}
+
 export function DesktopProfiles() {
-  const sectionRef = useRef<HTMLElement>(null)
+  const rootRef = useRef<HTMLDivElement>(null)
 
   useGSAP(() => {
-    const section = sectionRef.current
+    const root = rootRef.current
+    if (!root) return
 
-    if (!section) return
-
-    const cards = gsap.utils.toArray<HTMLElement>('.desktop-profile-card', section)
+    const slots = gsap.utils.toArray<HTMLElement>('.desktop-profile-reveal', root)
     const media = gsap.matchMedia()
-
     media.add(
       '(min-width: 1280px) and (prefers-reduced-motion: no-preference)',
       () => {
-        gsap.set(cards, {
-          autoAlpha: 0,
-          rotationX: -68,
-          z: -36,
-          transformPerspective: 900,
-          transformOrigin: '50% 0%',
-          willChange: 'transform,opacity',
-        })
+        slots.forEach((slot, index) => {
+          const rise = slot.querySelector<HTMLElement>('.desktop-profile-reveal__rise')
+          const card = rise?.querySelector<HTMLElement>('.desktop-profile-card')
+          if (!rise || !card) return
 
-        cards.forEach((card, index) => {
-          gsap.to(card, {
-            autoAlpha: 1,
-            rotationX: 0,
-            z: 0,
-            transformPerspective: 900,
-            duration: 0.84,
-            ease: 'power3.out',
-            clearProps: 'willChange',
+          const nestedItems = card.querySelectorAll<HTMLElement>(
+            '.desktop-profile-boost__item-rise, .desktop-profile-card__duration-rise',
+          )
+          // Playback is independent of the parent's duration, but starts from
+          // its progress rather than a second viewport/geometry trigger.
+          const nestedReveal = nestedItems.length
+            ? gsap.timeline({
+              id: card.classList.contains('desktop-profile-boost')
+                ? 'desktop-boost-items-entrance'
+                : 'desktop-duration-items-entrance',
+              paused: true,
+            })
+            : null
+          nestedItems.forEach((item, itemIndex) => {
+            nestedReveal!.fromTo(item, {
+              y: NESTED_CARD_REVEAL.rise,
+              autoAlpha: 0,
+            }, {
+              y: 0,
+              autoAlpha: 1,
+              ...DESKTOP_CARD_REVEAL_TIMING,
+              immediateRender: true,
+            }, itemIndex * NESTED_CARD_REVEAL.stagger)
+          })
+
+          let nestedStarted = false
+          const resetNested = () => {
+            nestedStarted = false
+            nestedReveal?.pause(0)
+          }
+
+          const parentReveal = createDesktopCardReveal({
+            items: [{ rise, card }],
             scrollTrigger: {
-              id: `desktop-profile-card-entrance-${index}`,
-              trigger: card,
-              start: 'top 85%',
+              id: 'desktop-profile-card-entrance-' + index,
+              trigger: slot,
+              start: DESKTOP_CARD_REVEAL_START,
               invalidateOnRefresh: true,
               toggleActions: 'play none none reverse',
+              // Reset immediately when the parent starts reversing, not when
+              // its playhead eventually crosses the launch point again.
+              onLeaveBack: nestedReveal ? resetNested : undefined,
             },
           })
+
+          if (nestedReveal) {
+            const revealNested = () => {
+              if (!nestedStarted && !parentReveal.reversed()
+                && parentReveal.progress() >= NESTED_CARD_REVEAL.parentProgress) {
+                nestedStarted = true
+                nestedReveal.play(0)
+              }
+            }
+            parentReveal.eventCallback('onUpdate', revealNested)
+            // Covers setup after scroll restoration or a deep-link jump.
+            revealNested()
+          }
         })
       },
     )
 
     return () => media.revert()
-  }, { scope: sectionRef })
+  }, { scope: rootRef })
 
   return (
-    <section
-      ref={sectionRef}
-      id="desktop-profiles"
-      className="desktop-profiles"
-      aria-labelledby="desktop-profiles-title"
-    >
-      <div className="desktop-profiles__inner">
-        <h2 className="desktop-profiles__title" id="desktop-profiles-title">
-          Выберите свой Мега 5G
-        </h2>
-
-        <div className="desktop-profiles__cards">
-          {standardProfiles.map((profile) => (
-            <StandardProfileCard profile={profile} key={profile.title} />
-          ))}
-          <TimedProfileCard />
+    <div ref={rootRef}>
+      <section id="desktop-profiles" className="desktop-profiles" aria-labelledby="desktop-profiles-title">
+        <div className="desktop-profiles__inner">
+          <h2 className="desktop-profiles__title" id="desktop-profiles-title">
+            Несколько профилей<br />под разные типы ваших задач
+          </h2>
+          <div className="desktop-profiles__cards">
+            {standardProfiles.map((profile) => (
+              <ProfileReveal key={profile.id}>
+                <StandardProfileCard profile={profile} />
+              </ProfileReveal>
+            ))}
+            <ProfileReveal>
+              <ExtraBoostCard />
+            </ProfileReveal>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+      <section className="desktop-profiles desktop-profiles--timed" aria-labelledby="desktop-timed-title">
+        <div className="desktop-profiles__inner">
+          <h2 className="desktop-profiles__title" id="desktop-timed-title">
+            Или выберите опцию на несколько часов,<br />чтобы попробовать
+          </h2>
+          <ProfileReveal>
+            <TimedProfileCard />
+          </ProfileReveal>
+        </div>
+      </section>
+    </div>
   )
 }

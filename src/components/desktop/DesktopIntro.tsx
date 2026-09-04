@@ -3,14 +3,13 @@ import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { publicAsset } from '../../publicAsset'
+import { createDesktopCardReveal } from './desktopCardReveal'
 import './desktop-intro.css'
 
 const introAsset = (name: string) => publicAsset(`assets/desktop/intro/${name}`)
-const HERO_SURFACE_OVERLAP = 32
-const HERO_SURFACE_SIDE_INSET = 50
+const finalIntroAsset = (name: string) => publicAsset(`assets/desktop/final/intro/${name}`)
 const HERO_CONTENT_RISE = -48
 const HERO_CONTENT_END_SCALE = 0.88
-const TECHNOLOGY_ENTRANCE_VIEWPORT_INSET = 0.15
 
 gsap.registerPlugin(useGSAP, ScrollTrigger)
 
@@ -31,25 +30,18 @@ const primaryLinks = [
   { label: 'Приложение', expandable: false },
 ]
 
-const benefits = [
-  { label: <>Быстрая<br />загрузка игр</>, secondIcon: 'benefit-headphones.svg' },
-  { label: <>Фильмы и сериалы<br />без ограничений</>, secondIcon: 'benefit-plus.svg' },
-  { label: <>Раздача скоростного<br />интернета</>, secondIcon: 'benefit-headphones.svg' },
-  { label: <>Загружайте файлы<br />быстрее</>, secondIcon: 'benefit-plus.svg' },
-]
-
 const technologies = [
   {
-    title: 'Приоритет сети 5G',
-    description: <>Вы всегда на связи,<br />даже в переполненной сети</>,
-    image: 'technology-priority.png',
-    modifier: 'priority',
+    title: <>Скорость интернета<br />на 60% больше</>,
+    description: <>Контент, видео и файлы загружаются почти вдвое<br />быстрее</>,
+    image: 'technology-internet.png',
+    modifier: 'internet',
   },
   {
-    title: 'Ускорение 60%',
-    description: <>Интернет работает<br />на 60% быстрее, чем 4G</>,
-    image: 'technology-speed.png',
-    modifier: 'speed',
+    title: 'Умное ускорение',
+    description: 'Интеллектуальное управление траффиком и распределение нагрузки сети',
+    image: 'technology-smart.png',
+    modifier: 'smart',
   },
 ]
 
@@ -141,7 +133,7 @@ function DesktopHero({
           <div className="desktop-intro__hero-image-frame" aria-hidden="true">
             <img
               className="desktop-intro__hero-image"
-              src={introAsset('promo-5g.png')}
+              src={finalIntroAsset('promo-5g.png')}
               alt=""
               width="1304"
               height="734"
@@ -154,39 +146,12 @@ function DesktopHero({
             <div className="desktop-intro__hero-copy-motion">
               <div className="desktop-intro__hero-heading">
                 <h1 id="desktop-hero-title">Мега 5G</h1>
-                <p>Скоростной интернет, который настроен<br />под вашу жизнь</p>
+                <p>Оцените первыми новый уровень скорости мобильного интернета</p>
               </div>
-              <a className="desktop-intro__hero-cta" href="#desktop-profiles">Выбрать профиль</a>
+              <a className="desktop-intro__hero-cta" href="#desktop-profiles">Подключить</a>
             </div>
           </div>
         </div>
-      </div>
-    </section>
-  )
-}
-
-function Benefits() {
-  return (
-    <section className="desktop-intro__benefits" aria-labelledby="desktop-benefits-title">
-      <h2 className="desktop-intro__visually-hidden" id="desktop-benefits-title">
-        Преимущества Мега 5G
-      </h2>
-      <div className="desktop-intro__rail desktop-intro__benefits-grid">
-        {benefits.map(({ label, secondIcon }, index) => (
-          <article className="desktop-intro__benefit" key={index}>
-            <p>{label}</p>
-            <div className="desktop-intro__benefit-icons" aria-hidden="true">
-              <img src={introAsset('benefit-5g.svg')} alt="" width="45" height="45" />
-              <img
-                className={secondIcon === 'benefit-plus.svg' ? 'is-plus' : undefined}
-                src={introAsset(secondIcon)}
-                alt=""
-                width={secondIcon === 'benefit-plus.svg' ? '46' : '43'}
-                height={secondIcon === 'benefit-plus.svg' ? '42' : '43'}
-              />
-            </div>
-          </article>
-        ))}
       </div>
     </section>
   )
@@ -196,18 +161,22 @@ function Technologies() {
   return (
     <section className="desktop-intro__technologies" aria-labelledby="desktop-technologies-title">
       <div className="desktop-intro__rail desktop-intro__technologies-inner">
-        <h2 id="desktop-technologies-title">Технологии будущего во всех профилях</h2>
+        <h2 id="desktop-technologies-title">Как работает ускорение</h2>
         <div className="desktop-intro__technology-grid">
           {technologies.map(({ title, description, image, modifier }) => (
-            <article className={`desktop-intro__technology desktop-intro__technology--${modifier}`} key={title}>
-              <div className="desktop-intro__technology-copy">
-                <h3>{title}</h3>
-                <p>{description}</p>
+            <div className="desktop-intro__technology-slot" key={modifier}>
+              <div className="desktop-intro__technology-rise">
+                <article className={`desktop-intro__technology desktop-intro__technology--${modifier}`}>
+                  <div className="desktop-intro__technology-copy">
+                    <h3>{title}</h3>
+                    <p>{description}</p>
+                  </div>
+                  <div className="desktop-intro__technology-visual" aria-hidden="true">
+                    <img src={finalIntroAsset(image)} alt="" loading="lazy" decoding="async" width="3200" height="1800" />
+                  </div>
+                </article>
               </div>
-              <div className="desktop-intro__technology-visual" aria-hidden="true">
-                <img src={introAsset(image)} alt="" loading="lazy" decoding="async" />
-              </div>
-            </article>
+            </div>
           ))}
         </div>
       </div>
@@ -238,18 +207,17 @@ export function DesktopIntro() {
     ) return
 
     const technologyCards = gsap.utils.toArray<HTMLElement>('.desktop-intro__technology', surface)
+    const technologyGrid = surface.querySelector<HTMLElement>('.desktop-intro__technology-grid')
 
-    if (technologyCards.length === 0) return
+    if (technologyCards.length === 0 || !technologyGrid) return
 
     const media = gsap.matchMedia()
 
     media.add(
       '(min-width: 1280px) and (prefers-reduced-motion: no-preference)',
       () => {
-        const surfaceHeight = surface.offsetHeight
-        const surfaceTop = surface.getBoundingClientRect().top
-        const technologyTopInSurface = technologyCards[0].getBoundingClientRect().top - surfaceTop
-        const getSurfaceTravel = () => hero.offsetTop + hero.offsetHeight - HERO_SURFACE_OVERLAP
+        const surfaceHeight = surface.getBoundingClientRect().height
+        const getSurfaceTravel = () => hero.offsetTop + hero.offsetHeight
 
         root.style.setProperty('--desktop-surface-height', `${surfaceHeight}px`)
         root.style.setProperty('--desktop-surface-travel', `${getSurfaceTravel()}px`)
@@ -261,10 +229,14 @@ export function DesktopIntro() {
             id: 'desktop-hero-motion',
             trigger: stage,
             start: 'top top',
-            end: () => `+=${window.innerHeight}`,
+            // Match pin spacing to the surface travel so the shorter RTB section
+            // stays joined to profiles throughout the pinned transition.
+            end: () => `+=${getSurfaceTravel()}`,
             pin: stage,
             pinSpacing: true,
-            scrub: 0.25,
+            // Lenis already smooths the page. An extra scrub delay would make
+            // this surface lag behind the profiles in the normal document flow.
+            scrub: true,
             invalidateOnRefresh: true,
           },
         })
@@ -283,11 +255,9 @@ export function DesktopIntro() {
             surface,
             {
               y: getSurfaceTravel,
-              clipPath: `inset(0px ${HERO_SURFACE_SIDE_INSET}px 0px ${HERO_SURFACE_SIDE_INSET}px round 32px)`,
             },
             {
               y: 0,
-              clipPath: 'inset(0px 0px 0px 0px round 32px)',
               duration: 1,
             },
             0,
@@ -305,64 +275,26 @@ export function DesktopIntro() {
           )
 
         const pinStart = () => timeline.scrollTrigger?.start ?? 0
-        const pinEnd = () => timeline.scrollTrigger?.end ?? pinStart() + window.innerHeight
-        const entranceStart = (topInSurface: number, viewportInset: number) => {
-          const surfaceTravel = getSurfaceTravel()
-          const viewportLine = window.innerHeight * (1 - viewportInset)
-          const crossingTravel = surfaceTravel + topInSurface - viewportLine
-
-          if (crossingTravel <= 0) return pinStart()
-          if (crossingTravel <= surfaceTravel) {
-            return pinStart() + (pinEnd() - pinStart()) * crossingTravel / surfaceTravel
-          }
-
-          return pinEnd() + crossingTravel - surfaceTravel
-        }
-        const technologyEntranceStart = () => entranceStart(
-          technologyTopInSurface,
-          TECHNOLOGY_ENTRANCE_VIEWPORT_INSET,
-        )
-        const createCardEntrance = (
-          cards: HTMLElement[],
-          start: () => number,
-          stagger: number,
-          id: string,
-        ) => {
-          gsap.set(cards, {
-            autoAlpha: 0,
-            rotationX: -68,
-            z: -36,
-            transformPerspective: 900,
-            transformOrigin: '50% 0%',
-            willChange: 'transform,opacity',
-          })
-
-          gsap.to(cards, {
-            autoAlpha: 1,
-            rotationX: 0,
-            z: 0,
-            transformPerspective: 900,
-            duration: 0.84,
-            stagger,
-            ease: 'power3.out',
-            clearProps: 'willChange',
-            scrollTrigger: {
-              id,
-              trigger: stage,
-              start,
-              end: () => Math.max(start() + 1, pinEnd()),
-              invalidateOnRefresh: true,
-              toggleActions: 'play none none reverse',
-            },
-          })
-        }
-
-        createCardEntrance(
-          technologyCards,
-          technologyEntranceStart,
-          0.06,
-          'desktop-technology-cards-entrance',
-        )
+        const pinEnd = () => timeline.scrollTrigger?.end ?? pinStart() + getSurfaceTravel()
+        // The surface moves 1:1 with scroll. Keep this threshold negative when
+        // cards are already in view on load: clamping to 0 waits for a first scroll.
+        // Measure the unanimated grid on every refresh, not the rotated cards.
+        const technologyEntranceStart = () => pinStart()
+          + getSurfaceTravel()
+          + technologyGrid.getBoundingClientRect().top - surface.getBoundingClientRect().top
+          - window.innerHeight
+        createDesktopCardReveal({
+          items: technologyCards.map(card => ({ card, rise: card.parentElement! })),
+          stagger: 0.06,
+          scrollTrigger: {
+            id: 'desktop-technology-cards-entrance',
+            trigger: stage,
+            start: technologyEntranceStart,
+            end: () => Math.max(technologyEntranceStart() + 1, pinEnd()),
+            invalidateOnRefresh: true,
+            toggleActions: 'play none none reverse',
+          },
+        })
 
         return () => {
           root.classList.remove('is-motion-ready')
@@ -387,7 +319,6 @@ export function DesktopIntro() {
             contentRef={contentRef}
           />
           <div ref={surfaceRef} className="desktop-intro__surface">
-            <Benefits />
             <Technologies />
           </div>
         </div>

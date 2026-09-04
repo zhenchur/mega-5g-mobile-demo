@@ -2,7 +2,7 @@
   --desktop-intro-gutter: clamp(64px, 5.5556vw, 80px);
   --desktop-header-height: 101px;
   --desktop-hero-background:
-    linear-gradient(111.507deg, rgb(143 168 216 / 30%) 0.27%, rgb(255 255 255 / 30%) 99.57%),
+    linear-gradient(-68.492785deg, rgb(143 168 216 / 30%) 0.27%, rgb(255 255 255 / 30%) 99.57%),
     #f2f4f7;
 
   min-width: 1280px;
@@ -28,19 +28,6 @@
 .desktop-intro__rail {
   width: min(calc(100% - 2 * var(--desktop-intro-gutter)), 1280px);
   margin-inline: auto;
-}
-
-.desktop-intro__visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  padding: 0;
-  border: 0;
-  margin: -1px;
-  clip: rect(0 0 0 0);
-  clip-path: inset(50%);
-  white-space: nowrap;
 }
 
 .desktop-intro__header {
@@ -227,7 +214,7 @@
   position: relative;
   z-index: 1;
   height: 568px;
-  overflow: hidden;
+  overflow: visible;
   background: var(--desktop-hero-background);
 }
 
@@ -278,10 +265,9 @@
 
 .desktop-intro__hero-image-frame {
   position: absolute;
-  top: 50%;
-  left: calc(50% + min(9.7917vw, 141px));
-  width: min(76.3889vw, 1100px);
-  transform: translate(-50%, -50%);
+  top: -41px;
+  right: calc(var(--desktop-intro-gutter) - 153px);
+  width: 1304px;
   user-select: none;
   pointer-events: none;
 }
@@ -298,7 +284,7 @@
   z-index: 1;
   top: calc(50% - 0.5px);
   left: var(--desktop-intro-gutter);
-  width: 490px;
+  width: 520px;
   transform: translateY(-50%);
 }
 
@@ -353,9 +339,9 @@
 .desktop-intro__surface {
   position: relative;
   z-index: 2;
-  margin-top: -32px;
+  margin-top: 0;
   overflow: hidden;
-  border-radius: 32px;
+  border-radius: 0 0 32px 32px;
   background: #fff;
 }
 
@@ -370,7 +356,7 @@
   top: 0;
   right: 0;
   left: 0;
-  height: calc(100% + var(--desktop-surface-travel));
+  height: var(--desktop-surface-travel);
   clip-path: inset(0 0 var(--desktop-hero-underlay-clip, 0px) 0);
   background: var(--desktop-hero-background);
   content: '';
@@ -398,75 +384,22 @@
   z-index: 3;
   top: 0;
   margin-top: 0;
-  will-change: transform, clip-path;
+  will-change: transform;
 }
 
 .desktop-intro.is-motion-ready .desktop-intro__hero-content-motion {
   will-change: transform;
 }
 
-.desktop-intro__benefits {
-  padding-block: 96px;
-}
-
-.desktop-intro__benefits-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 16px;
-}
-
-.desktop-intro__benefit {
-  display: flex;
-  height: 160px;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: space-between;
-  padding: 20px;
-  overflow: hidden;
-  border-radius: 16px;
-  background: #f9f8fa;
-}
-
-.desktop-intro__benefit p {
-  margin: 0;
-  color: #333;
-  font-size: 15px;
-  font-weight: 500;
-  line-height: 18px;
-}
-
-.desktop-intro__benefit-icons {
-  display: flex;
-  width: 80px;
-  height: 48px;
-  align-items: center;
-}
-
-.desktop-intro__benefit-icons img:first-child {
-  position: relative;
-  z-index: 2;
-  width: 45px;
-  height: 45px;
-  flex: 0 0 45px;
-}
-
-.desktop-intro__benefit-icons img + img {
-  position: relative;
-  z-index: 1;
-  width: 43px;
-  height: 43px;
-  flex: 0 0 43px;
-  margin-left: -6px;
-}
-
-.desktop-intro__benefit-icons img + img.is-plus {
-  width: 45.57px;
-  height: 42px;
-  flex-basis: 45.57px;
+.desktop-intro.is-motion-ready .desktop-intro__technology {
+  /* Both cards wait for their tween, including the staggered second card.
+     Removing is-motion-ready restores visible content for reduced motion. */
+  opacity: 0;
+  visibility: hidden;
 }
 
 .desktop-intro__technologies {
-  padding-bottom: 96px;
+  padding-block: 96px;
 }
 
 .desktop-intro__technologies-inner {
@@ -494,10 +427,16 @@
   gap: 16px;
 }
 
+.desktop-intro__technology-slot,
+.desktop-intro__technology-rise {
+  min-width: 0;
+  width: 100%;
+}
+
 .desktop-intro__technology {
   position: relative;
   display: flex;
-  height: 220px;
+  height: 226px;
   min-width: 0;
   overflow: hidden;
   border-radius: 24px;
@@ -508,12 +447,13 @@
   position: relative;
   z-index: 1;
   width: 320px;
-  height: 220px;
+  height: 100%;
   flex: 0 0 320px;
   padding: 32px;
 }
 
 .desktop-intro__technology h3 {
+  width: 400px;
   margin: 0 0 12px;
   color: #333;
   font-size: 24px;
@@ -541,23 +481,26 @@
   display: block;
   max-width: none;
   object-fit: cover;
-  transform: translate(-50%, -50%);
   pointer-events: none;
   user-select: none;
 }
 
-.desktop-intro__technology--priority .desktop-intro__technology-visual img {
-  top: calc(50% + 5px);
-  left: calc(50% + 54.5px);
-  width: 591px;
-  height: 332px;
+.desktop-intro__technology--internet .desktop-intro__technology-visual img {
+  top: -41.71px;
+  left: -97.78px;
+  width: 586.667px;
+  height: 330px;
 }
 
-.desktop-intro__technology--speed .desktop-intro__technology-visual img {
-  top: calc(50% + 22px);
-  left: calc(50% - 55.5px);
-  width: 487px;
-  height: 274px;
+.desktop-intro__technology--internet p {
+  opacity: 0.8;
+}
+
+.desktop-intro__technology--smart .desktop-intro__technology-visual img {
+  top: -1.69px;
+  left: -129.78px;
+  width: 453.557px;
+  height: 255.375px;
 }
 
 @media (min-width: 1280px) and (max-width: 1399px) {
@@ -572,5 +515,15 @@
   .desktop-intro__technology-copy {
     width: 292px;
     flex-basis: 292px;
+  }
+
+  .desktop-intro__hero-image-frame {
+    right: -70px;
+    width: 1180px;
+    top: -7px;
+  }
+
+  .desktop-intro__hero-copy {
+    width: 470px;
   }
 }

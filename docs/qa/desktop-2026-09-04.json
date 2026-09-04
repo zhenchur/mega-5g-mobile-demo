@@ -1,0 +1,224 @@
+{
+  "errors": [],
+  "initial": {
+    "triggers": [
+      {
+        "id": "desktop-hero-motion",
+        "start": -0.001,
+        "end": 669,
+        "toggle": "play"
+      },
+      {
+        "id": "desktop-technology-cards-entrance",
+        "start": -47,
+        "end": 669,
+        "toggle": "play none none reverse"
+      },
+      {
+        "id": "desktop-profile-card-entrance-0",
+        "start": 634,
+        "end": 1819,
+        "toggle": "play none none reverse"
+      },
+      {
+        "id": "desktop-profile-card-entrance-1",
+        "start": 1070,
+        "end": 2255,
+        "toggle": "play none none reverse"
+      },
+      {
+        "id": "desktop-profile-card-entrance-2",
+        "start": 1506,
+        "end": 2691,
+        "toggle": "play none none reverse"
+      },
+      {
+        "id": "desktop-profile-card-entrance-3",
+        "start": 1942,
+        "end": 3099,
+        "toggle": "play none none reverse"
+      },
+      {
+        "id": "desktop-profile-card-entrance-4",
+        "start": 2558,
+        "end": 3763,
+        "toggle": "play none none reverse"
+      },
+      {
+        "id": "desktop-connect-visual-entrance",
+        "start": 3382,
+        "end": 4587,
+        "toggle": "play none none reverse"
+      },
+      {
+        "id": "desktop-faq-row-entrance-0",
+        "start": 4006,
+        "end": 4932,
+        "toggle": "play none none reverse"
+      },
+      {
+        "id": "desktop-faq-row-entrance-1",
+        "start": 4175,
+        "end": 5012,
+        "toggle": "play none none reverse"
+      },
+      {
+        "id": "desktop-faq-row-entrance-2",
+        "start": 4255,
+        "end": 5092,
+        "toggle": "play none none reverse"
+      },
+      {
+        "id": "desktop-faq-row-entrance-3",
+        "start": 4335,
+        "end": 5172,
+        "toggle": "play none none reverse"
+      }
+    ],
+    "height": 5910,
+    "width": 1440
+  },
+  "seam": {
+    "samples": 220,
+    "max": 0.0009765625,
+    "minWidth": 1440,
+    "maxWidth": 1440
+  },
+  "anchor": {
+    "targetTop": 101,
+    "headerBottom": 101,
+    "hash": "#desktop-profiles"
+  },
+  "desktop-profile-card-entrance-3": {
+    "forward": {
+      "progress": 1,
+      "nested": [
+        {
+          "opacity": "1",
+          "y": 0
+        },
+        {
+          "opacity": "1",
+          "y": 0
+        },
+        {
+          "opacity": "1",
+          "y": 0
+        }
+      ]
+    },
+    "reverse": {
+      "progress": 0,
+      "nested": [
+        {
+          "opacity": "0",
+          "y": 32
+        },
+        {
+          "opacity": "0",
+          "y": 32
+        },
+        {
+          "opacity": "0",
+          "y": 32
+        }
+      ]
+    }
+  },
+  "desktop-profile-card-entrance-4": {
+    "forward": {
+      "progress": 1,
+      "nested": [
+        {
+          "opacity": "1",
+          "y": 0
+        },
+        {
+          "opacity": "1",
+          "y": 0
+        },
+        {
+          "opacity": "1",
+          "y": 0
+        }
+      ]
+    },
+    "reverse": {
+      "progress": 0,
+      "nested": [
+        {
+          "opacity": "0",
+          "y": 32
+        },
+        {
+          "opacity": "0",
+          "y": 32
+        },
+        {
+          "opacity": "0",
+          "y": 32
+        }
+      ]
+    }
+  },
+  "tabs": [
+    {
+      "id": "desktop-connect-panel-new",
+      "opacity": "0",
+      "inert": true,
+      "aria": "true"
+    },
+    {
+      "id": "desktop-connect-panel-customer",
+      "opacity": "1",
+      "inert": false,
+      "aria": "false"
+    }
+  ],
+  "tabKeyboard": {
+    "focused": "desktop-connect-tab-new",
+    "selected": "desktop-connect-tab-new"
+  },
+  "rapidTabs": [
+    {
+      "opacity": "0",
+      "inert": true
+    },
+    {
+      "opacity": "1",
+      "inert": false
+    }
+  ],
+  "reduced": {
+    "triggers": 0,
+    "pins": 0,
+    "hidden": 1,
+    "selected": "desktop-connect-tab-customer"
+  },
+  "reducedTab": [
+    {
+      "opacity": "1",
+      "inert": false
+    },
+    {
+      "opacity": "0",
+      "inert": true
+    }
+  ],
+  "resume": {
+    "triggers": 12,
+    "pins": 1
+  },
+  "tablet": {
+    "triggers": 0,
+    "pins": 0,
+    "lenis": ""
+  },
+  "remount": {
+    "triggers": 12,
+    "pins": 1,
+    "lenis": "lenis",
+    "width": 1280,
+    "viewport": 1280
+  }
+}

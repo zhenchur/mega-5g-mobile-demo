@@ -3,15 +3,15 @@ import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { publicAsset } from '../../publicAsset'
+import { createDesktopCardReveal, DESKTOP_CARD_REVEAL_START } from './desktopCardReveal'
 import './desktop-lower.css'
 
 gsap.registerPlugin(useGSAP, ScrollTrigger)
 
 const lowerAsset = (filename: string) => publicAsset(`assets/desktop/lower/${filename}`)
+const connectAsset = (filename: string) => publicAsset(`assets/desktop/final/connect/${filename}`)
 const CONNECT_PLACEHOLDER = '#desktop-connect'
 const FOOTER_PLACEHOLDER = '#desktop-footer'
-
-type ConnectTab = 'new' | 'customer'
 
 const topNavigation = [
   {
@@ -102,223 +102,185 @@ function FooterNavigationGroup({
   )
 }
 
-function NewSubscriberPanel({ hidden = false }: { hidden?: boolean }) {
-  return (
-    <div
-      id="desktop-connect-panel-new"
-      className="dl-connect-new"
-      role="tabpanel"
-      aria-labelledby="desktop-connect-tab-new"
-      hidden={hidden}
-    >
-      <article className="dl-new-card">
-        <div className="dl-new-card__visual" aria-hidden="true">
-          <div className="dl-new-card__port-art">
-            <img src={lowerAsset('connect-port.png')} alt="" loading="lazy" decoding="async" />
-          </div>
-        </div>
-        <div className="dl-new-card__body">
-          <div>
-            <h3>Перейти в МегаФон — просто!</h3>
-            <div className="dl-new-card__steps dl-new-card__steps--port">
-              <div className="dl-new-step">
-                <img src={lowerAsset('step-transfer.svg')} alt="" width="32" height="32" />
-                <p>Оформите онлайн-заявку на перенос своего номера</p>
-              </div>
-              <div className="dl-new-step">
-                <img src={lowerAsset('step-sim.svg')} alt="" width="32" height="32" />
-                <p>Получите новую сим-карту с временным номером. <a href={CONNECT_PLACEHOLDER}>Зачем она нужна?</a></p>
-              </div>
-              <div className="dl-new-step">
-                <img src={lowerAsset('step-clock.svg')} alt="" width="32" height="32" />
-                <p>Дождитесь переноса номера. Обычно это занимает 8 дней</p>
-              </div>
-            </div>
-          </div>
-          <a className="dl-connect-cta dl-connect-cta--solid" href={CONNECT_PLACEHOLDER}>Перенести номер</a>
-        </div>
-      </article>
-
-      <article className="dl-new-card">
-        <div className="dl-new-card__visual" aria-hidden="true">
-          <img className="dl-new-card__sim-art" src={lowerAsset('connect-sim.png')} alt="" loading="lazy" decoding="async" />
-        </div>
-        <div className="dl-new-card__body dl-new-card__body--sim">
-          <div>
-            <h3>Всего 3 шага — и вы в МегаФоне!</h3>
-            <div className="dl-new-card__steps dl-new-card__steps--sim">
-              <div className="dl-new-step">
-                <img src={lowerAsset('step-sim.svg')} alt="" width="32" height="32" />
-                <p>Выберите тип сим-карты. Пластиковую или цифровую</p>
-              </div>
-              <div className="dl-new-step">
-                <img src={lowerAsset('step-phone.svg')} alt="" width="32" height="32" />
-                <p>Подберите номер. Красивый или который легко запомнить</p>
-              </div>
-              <div className="dl-new-step">
-                <img src={lowerAsset('step-contract.svg')} alt="" width="32" height="32" />
-                <p>Заключите договор связи в салоне МегаФона или онлайн</p>
-              </div>
-            </div>
-          </div>
-          <a className="dl-connect-cta dl-connect-cta--solid" href={CONNECT_PLACEHOLDER}>Заказать сим-карту</a>
-        </div>
-      </article>
-    </div>
-  )
-}
-
-function ExistingCustomerPanel({ hidden = false }: { hidden?: boolean }) {
-  return (
-    <div
-      id="desktop-connect-panel-customer"
-      className="dl-connect-customer"
-      role="tabpanel"
-      aria-labelledby="desktop-connect-tab-customer"
-      hidden={hidden}
-    >
-      <div className="dl-customer-phone" aria-hidden="true">
-        <div className="dl-customer-phone__canvas">
-          <img className="dl-customer-phone__screen" src={lowerAsset('customer-screen.png')} alt="" loading="lazy" decoding="async" />
-          <img className="dl-customer-phone__bezel" src={lowerAsset('customer-phone.png')} alt="" loading="lazy" decoding="async" />
-        </div>
-      </div>
-
-      <div className="dl-customer-content">
-        <ol className="dl-customer-steps">
-          <li className="is-current">
-            <span className="dl-customer-step-number">1</span>
-            <p>
-              Зайдите в <a href={CONNECT_PLACEHOLDER}>приложение «МегаФон»</a> или в{' '}
-              <a href={CONNECT_PLACEHOLDER}>Личный кабинет</a>.
-            </p>
-          </li>
-          <li>
-            <span className="dl-customer-step-number">2</span>
-            <p>На главном экране в блоке «Сервисы» выберите вкладку «5G».</p>
-          </li>
-          <li>
-            <span className="dl-customer-step-number">3</span>
-            <p>Вы на месте, выбирайте профиль</p>
-          </li>
-        </ol>
-        <div className="dl-customer-actions">
-          <a className="dl-connect-cta dl-connect-cta--solid" href={CONNECT_PLACEHOLDER}>Заказать сим-карту</a>
-          <a className="dl-connect-cta dl-connect-cta--outline" href={CONNECT_PLACEHOLDER}>Перенести номер</a>
-        </div>
-      </div>
-    </div>
-  )
-}
-
 function DesktopConnect() {
   const sectionRef = useRef<HTMLElement>(null)
-  const tabs: readonly ConnectTab[] = ['new', 'customer']
-  const tabRefs = useRef<Array<HTMLButtonElement | null>>([])
-  const [activeTab, setActiveTab] = useState<ConnectTab>('new')
+  const tabsRef = useRef<(HTMLButtonElement | null)[]>([])
+  const fadeRef = useRef<gsap.core.Timeline | null>(null)
+  const reducedMotionRef = useRef(false)
+  const activeTabRef = useRef(0)
+  const [activeTab, setActiveTab] = useState(0)
 
   useGSAP(() => {
     const section = sectionRef.current
     if (!section) return
 
-    const cards = gsap.utils.toArray<HTMLElement>('.dl-new-card', section)
-    const row = section.querySelector<HTMLElement>('.dl-connect-new')
+    const panels = section.querySelectorAll<HTMLElement>('.dl-connect-panel')
     const media = gsap.matchMedia()
 
-    media.add(
-      '(min-width: 1280px) and (prefers-reduced-motion: no-preference)',
-      () => {
-        if (!row || cards.length === 0) return
+    media.add({
+      motion: '(prefers-reduced-motion: no-preference)',
+      reduce: '(prefers-reduced-motion: reduce)',
+    }, (context) => {
+      reducedMotionRef.current = Boolean(context.conditions?.reduce)
+      // A single reversible crossfade preserves the current opacity on rapid clicks.
+      const fade = gsap.timeline({ paused: true, defaults: { duration: 0.32, ease: 'power1.inOut' } })
+        .fromTo(panels[0], { autoAlpha: 1 }, { autoAlpha: 0 }, 0)
+        .fromTo(panels[1], { autoAlpha: 0 }, { autoAlpha: 1 }, 0)
 
-        gsap.set(cards, {
-          autoAlpha: 0,
-          rotationX: -68,
-          z: -36,
-          transformPerspective: 900,
-          transformOrigin: '50% 0%',
-          willChange: 'transform,opacity',
-        })
+      fade.progress(activeTabRef.current).pause()
+      fadeRef.current = fade
+      return () => { fadeRef.current = null }
+    })
 
-        gsap.to(cards, {
-          autoAlpha: 1,
-          rotationX: 0,
-          z: 0,
-          transformPerspective: 900,
-          duration: 0.84,
-          stagger: 0.06,
-          ease: 'power3.out',
-          clearProps: 'willChange',
-          scrollTrigger: {
-            id: 'desktop-connect-cards-entrance',
-            trigger: row,
-            start: 'top 85%',
-            invalidateOnRefresh: true,
-            toggleActions: 'play none none reverse',
-          },
-        })
-      },
-    )
+    media.add('(min-width: 1280px) and (prefers-reduced-motion: no-preference)', () => {
+      const trigger = section.querySelector<HTMLElement>('.dl-connect-panels')
+      if (!trigger) return
+
+      const rises = gsap.utils.toArray<HTMLElement>('.dl-connect-visual-rise', section)
+      // Tab crossfade owns the panels; viewport motion owns only these nested
+      // visual layers. Both illustrations share one entrance, not a tab replay.
+      createDesktopCardReveal({
+        items: rises.map(rise => ({
+          rise,
+          card: rise.querySelector<HTMLElement>('.dl-connect-visual')!,
+        })),
+        scrollTrigger: {
+          id: 'desktop-connect-visual-entrance',
+          trigger,
+          start: DESKTOP_CARD_REVEAL_START,
+          invalidateOnRefresh: true,
+          toggleActions: 'play none none reverse',
+        },
+      })
+    })
 
     return () => media.revert()
   }, { scope: sectionRef })
 
-  const selectAndFocus = (index: number) => {
-    const nextIndex = (index + tabs.length) % tabs.length
-    setActiveTab(tabs[nextIndex])
-    tabRefs.current[nextIndex]?.focus()
+  function selectTab(index: number) {
+    if (index === activeTabRef.current) return
+    activeTabRef.current = index
+    setActiveTab(index)
+
+    const fade = fadeRef.current
+    if (!fade) return
+    if (reducedMotionRef.current) fade.progress(index).pause()
+    else if (index === 1) fade.play()
+    else fade.reverse()
   }
 
-  const handleTabKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    const activeIndex = tabs.indexOf(activeTab)
-    if (event.key === 'ArrowLeft') {
-      event.preventDefault()
-      selectAndFocus(activeIndex - 1)
-    } else if (event.key === 'ArrowRight') {
-      event.preventDefault()
-      selectAndFocus(activeIndex + 1)
-    } else if (event.key === 'Home') {
-      event.preventDefault()
-      selectAndFocus(0)
-    } else if (event.key === 'End') {
-      event.preventDefault()
-      selectAndFocus(tabs.length - 1)
-    }
+  function handleTabKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
+    let next: number
+    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') next = 1 - index
+    else if (event.key === 'Home') next = 0
+    else if (event.key === 'End') next = 1
+    else return
+
+    event.preventDefault()
+    tabsRef.current[next]?.focus()
+    selectTab(next)
   }
 
   return (
-    <section ref={sectionRef} id="desktop-connect" className={`dl-connect dl-connect--${activeTab}`} aria-labelledby="desktop-connect-title">
+    <section ref={sectionRef} id="desktop-connect" className="dl-connect" aria-labelledby="desktop-connect-title">
       <div className="dl-connect-header">
         <h2 id="desktop-connect-title">Как подключить</h2>
-        <div className="dl-connect-tabs" role="tablist" aria-label="Выберите статус абонента" onKeyDown={handleTabKeyDown}>
-          <button
-            id="desktop-connect-tab-new"
-            ref={(node) => { tabRefs.current[0] = node }}
-            type="button"
-            role="tab"
-            aria-selected={activeTab === 'new'}
-            aria-controls="desktop-connect-panel-new"
-            tabIndex={activeTab === 'new' ? 0 : -1}
-            onClick={() => setActiveTab('new')}
-          >
-            Я новый абонент
-          </button>
-          <button
-            id="desktop-connect-tab-customer"
-            ref={(node) => { tabRefs.current[1] = node }}
-            type="button"
-            role="tab"
-            aria-selected={activeTab === 'customer'}
-            aria-controls="desktop-connect-panel-customer"
-            tabIndex={activeTab === 'customer' ? 0 : -1}
-            onClick={() => setActiveTab('customer')}
-          >
-            Я клиент МегаФона
-          </button>
+        <div className="dl-connect-tabs" role="tablist" aria-label="Статус абонента">
+          {['Я новый абонент', 'Я клиент МегаФона'].map((label, index) => (
+            <button
+              key={label}
+              ref={(element) => { tabsRef.current[index] = element }}
+              id={`desktop-connect-tab-${index === 0 ? 'new' : 'customer'}`}
+              className={`dl-connect-tab${activeTab === index ? ' is-selected' : ''}`}
+              type="button"
+              role="tab"
+              aria-selected={activeTab === index}
+              aria-controls={`desktop-connect-panel-${index === 0 ? 'new' : 'customer'}`}
+              tabIndex={activeTab === index ? 0 : -1}
+              onClick={() => selectTab(index)}
+              onKeyDown={(event) => handleTabKeyDown(event, index)}
+            >
+              {label}
+            </button>
+          ))}
         </div>
       </div>
 
-      <NewSubscriberPanel hidden={activeTab !== 'new'} />
-      <ExistingCustomerPanel hidden={activeTab !== 'customer'} />
+      <div className="dl-connect-panels">
+      <div
+        id="desktop-connect-panel-new"
+        className="dl-connect-panel dl-connect-panel--new"
+        role="tabpanel"
+        aria-labelledby="desktop-connect-tab-new"
+        aria-hidden={activeTab !== 0}
+        inert={activeTab !== 0}
+      >
+        <div className="dl-connect-visual-rise">
+          <div className="dl-connect-visual dl-connect-visual--new" aria-hidden="true">
+            <img src={connectAsset('phones.png')} alt="" width="1178" height="663" loading="lazy" decoding="async" />
+          </div>
+        </div>
+        <div className="dl-connect-content">
+          <h3>Перенесите номер или закажите новую сим-карту</h3>
+          <div className="dl-connect-steps">
+            <div className="dl-new-step">
+              <img src={connectAsset('step-sim.svg')} alt="" width="32" height="32" />
+              <p>Выберите тип сим-карты. Пластиковую или цифровую</p>
+            </div>
+            <div className="dl-new-step">
+              <img src={connectAsset('step-phone.svg')} alt="" width="32" height="32" />
+              <p>Подберите номер. Красивый или который легко запомнить</p>
+            </div>
+            <div className="dl-new-step">
+              <img src={connectAsset('step-contract.svg')} alt="" width="32" height="32" />
+              <p>Заключите договор связи в салоне МегаФона или онлайн</p>
+            </div>
+          </div>
+          <div className="dl-connect-actions">
+            <a className="dl-connect-cta dl-connect-cta--solid" href={CONNECT_PLACEHOLDER}>Заказать сим-карту</a>
+            <a className="dl-connect-cta dl-connect-cta--outline" href={CONNECT_PLACEHOLDER}>Заказать новую сим-карту</a>
+          </div>
+        </div>
+      </div>
+      <div
+        id="desktop-connect-panel-customer"
+        className="dl-connect-panel dl-connect-panel--customer"
+        role="tabpanel"
+        aria-labelledby="desktop-connect-tab-customer"
+        aria-hidden={activeTab !== 1}
+        inert={activeTab !== 1}
+      >
+        <div className="dl-connect-visual-rise">
+          <div className="dl-connect-visual" aria-hidden="true">
+            <div className="dl-connect-phone">
+              <img className="dl-connect-phone__screen" src={lowerAsset('customer-screen.png')} alt="" width="428" height="924" decoding="async" />
+              <img className="dl-connect-phone__frame" src={lowerAsset('customer-phone.png')} alt="" width="1736" height="3528" decoding="async" />
+            </div>
+          </div>
+        </div>
+        <div className="dl-connect-content">
+          <h3>Опциональный заголовок в одну или две строки</h3>
+          <div className="dl-connect-steps">
+            <div className="dl-new-step">
+              <img src={connectAsset('step-sim.svg')} alt="" width="32" height="32" />
+              <p>Призыв зайти в приложение МегаФона или личный кабинет</p>
+            </div>
+            <div className="dl-new-step">
+              <img src={connectAsset('step-phone.svg')} alt="" width="32" height="32" />
+              <p>Найти на главном меню нужную услугу</p>
+            </div>
+            <div className="dl-new-step">
+              <img src={connectAsset('step-contract.svg')} alt="" width="32" height="32" />
+              <p>Перейти на страницу и подтвердить использование</p>
+            </div>
+          </div>
+          <div className="dl-connect-actions">
+            <a className="dl-connect-cta dl-connect-cta--solid" href={CONNECT_PLACEHOLDER}>В приложение «МегаФон»</a>
+            <a className="dl-connect-cta dl-connect-cta--outline" href={CONNECT_PLACEHOLDER}>В личный кабинет</a>
+          </div>
+        </div>
+      </div>
+      </div>
     </section>
   )
 }
@@ -330,34 +292,23 @@ function DesktopFaq() {
     const section = sectionRef.current
     if (!section) return
 
-    const rows = gsap.utils.toArray<HTMLElement>('.dl-faq-row', section)
+    const slots = gsap.utils.toArray<HTMLElement>('.dl-faq-reveal', section)
     const media = gsap.matchMedia()
 
     media.add(
       '(min-width: 1280px) and (prefers-reduced-motion: no-preference)',
       () => {
-        gsap.set(rows, {
-          autoAlpha: 0,
-          rotationX: -68,
-          z: -36,
-          transformPerspective: 900,
-          transformOrigin: '50% 0%',
-          willChange: 'transform,opacity',
-        })
+        slots.forEach((slot, index) => {
+          const rise = slot.querySelector<HTMLElement>('.dl-faq-reveal__rise')
+          const card = slot.querySelector<HTMLElement>('.dl-faq-row')
+          if (!rise || !card) return
 
-        rows.forEach((row, index) => {
-          gsap.to(row, {
-            autoAlpha: 1,
-            rotationX: 0,
-            z: 0,
-            transformPerspective: 900,
-            duration: 0.84,
-            ease: 'power3.out',
-            clearProps: 'willChange',
+          createDesktopCardReveal({
+            items: [{ rise, card }],
             scrollTrigger: {
               id: `desktop-faq-row-entrance-${index}`,
-              trigger: row,
-              start: 'top 85%',
+              trigger: slot,
+              start: DESKTOP_CARD_REVEAL_START,
               invalidateOnRefresh: true,
               toggleActions: 'play none none reverse',
             },
@@ -374,26 +325,33 @@ function DesktopFaq() {
       <div className="dl-faq__inner">
         <h2 id="desktop-faq-title">Остались вопросы?</h2>
         <div className="dl-faq__items">
-          <article className="dl-faq-row dl-faq-row--open" aria-labelledby="desktop-faq-question-1">
-            <header>
-              <h3 id="desktop-faq-question-1">Что такое 5G режим?</h3>
-              <img src={lowerAsset('faq-up.svg')} alt="" width="32" height="32" />
-            </header>
-            <p>«5G режим» — это специальная услуга мобильной связи, которая дает доступ к сетям пятого поколения, а в зонах без покрытия 5G автоматически включает оптимизированные настройки, ускоряя передачу данных до 60%</p>
-          </article>
+          <div className="dl-faq-reveal">
+            <div className="dl-faq-reveal__rise">
+              <article className="dl-faq-row dl-faq-row--open" aria-labelledby="desktop-faq-question-1">
+                <header>
+                  <h3 id="desktop-faq-question-1">Что такое 5G режим?</h3>
+                  <img src={lowerAsset('faq-up.svg')} alt="" width="32" height="32" />
+                </header>
+                <p>«5G режим» — это специальная услуга мобильной связи, которая дает доступ к сетям пятого поколения, а в зонах без покрытия 5G автоматически включает оптимизированные настройки, ускоряя передачу данных до 60%</p>
+              </article>
+            </div>
+          </div>
 
           {closedQuestions.map((question) => (
-            <button
-              className="dl-faq-row dl-faq-row--closed"
-              type="button"
-              disabled
-              aria-disabled="true"
-              aria-expanded="false"
-              key={question}
-            >
-              <span>{question}</span>
-              <img src={lowerAsset('faq-down.svg')} alt="" width="32" height="32" />
-            </button>
+            <div className="dl-faq-reveal" key={question}>
+              <div className="dl-faq-reveal__rise">
+                <button
+                  className="dl-faq-row dl-faq-row--closed"
+                  type="button"
+                  disabled
+                  aria-disabled="true"
+                  aria-expanded="false"
+                >
+                  <span>{question}</span>
+                  <img src={lowerAsset('faq-down.svg')} alt="" width="32" height="32" />
+                </button>
+              </div>
+            </div>
           ))}
         </div>
       </div>

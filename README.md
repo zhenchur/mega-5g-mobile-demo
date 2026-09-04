@@ -1,96 +1,70 @@
-# Мега 5G — mobile motion demo
+# Мега 5G — моушн-система и демо
 
-Интерактивный прототип мобильного лендинга по [макету Figma](https://www.figma.com/design/2g9qm05bxiZ5EeRtcuLiNi/MegaFon_Mega-5G_landing-3d_INNER). Он демонстрирует сценарии, ритм и принципы анимации: hero-scroll, раскрытие второй секции, карточные стопки и swipe-карусели.
+Рабочий референс анимаций desktop и mobile на React, TypeScript, GSAP и ScrollTrigger.
 
-> [!IMPORTANT]
-> Это демо сценариев и принципов анимации, а не готовая верстка для интеграции. Не следует напрямую переносить текущие DOM-структуру, CSS, абсолютные размеры, тексты или визуальные стили в продукт. Механику нужно заново реализовать внутри продуктовой архитектуры и дизайн-системы.
+- **[Открыть демо](https://zhenchur.github.io/mega-5g-mobile-demo/)** — размер окна выбирает версию.
+- **[Моушн-система](docs/MOTION_SYSTEM.md)** — карта зон, элементы, параметры, сценарии и различия версий. Начните с этого документа.
+- [Интеграция в продукт](docs/ANIMATION_INTEGRATION.md) — структура кода, владение анимацией, cleanup и порядок переноса.
+- [Аудит перед передачей](docs/HANDOFF_REVIEW.md) — выполненные проверки и границы проверки.
+- [Мобильный дизайн](docs/MOBILE_DESIGN.md) — геометрия, ассеты и история мобильных решений.
 
-## Целевой экран
+Демо задаёт поведение и динамику. Продуктовые компоненты, бизнес-логику и адаптивную верстку разработчики реализуют внутри своей архитектуры. Кнопки оформления услуги, авторизация, меню и большая часть FAQ здесь служат визуальными образцами; их состояния перечислены в моушн-системе.
 
-Дизайн и тайминги настраивались под iPhone 13 в портретной ориентации: `390 × 844 CSS px`. На более широких, более высоких и landscape-вьюпортах композиция и моменты срабатывания могут вести себя некорректно — эти размеры не входят в область визуальной приемки демо.
+## Режимы
 
-При ширине от `768px` намеренно показывается desktop-заглушка с просьбой открыть страницу на смартфоне.
+| Viewport | Режим | Figma |
+|---|---|---|
+| ≤767 px | Обновлённая мобильная версия; нативный скролл | [360 px](https://www.figma.com/design/2g9qm05bxiZ5EeRtcuLiNi/MegaFon_Mega-5G_landing-3d_INNER?node-id=1853-28007), [клиентская вкладка](https://www.figma.com/design/2g9qm05bxiZ5EeRtcuLiNi/MegaFon_Mega-5G_landing-3d_INNER?node-id=1986-43263) |
+| 768–1279 px | Статичная планшетная заглушка | Планшетная композиция не задана |
+| ≥1280 px | Desktop с Lenis | [1440 px](https://www.figma.com/design/2g9qm05bxiZ5EeRtcuLiNi/MegaFon_Mega-5G_landing-3d_INNER?node-id=1824-18329), [клиентская вкладка](https://www.figma.com/design/2g9qm05bxiZ5EeRtcuLiNi/MegaFon_Mega-5G_landing-3d_INNER?node-id=1986-36291) |
 
-## Требования и запуск
+Мобильные входы запускаются на линии **95% высоты viewport от верхнего края** (5% от нижнего). Desktop использует 85%, технологии — нижнюю границу. Это пороги запуска временной анимации, а не её длительность. Промо имеет отдельный scroll-сценарий.
 
-- Node.js `^20.19.0 || >=22.12.0`;
-- npm с поддержкой lock-файла;
-- рекомендуемая версия для воспроизводимой локальной работы указана в `.nvmrc`.
+## Локальный запуск
 
-```bash
+Node.js `^20.19.0 || >=22.12.0`; рекомендуемая версия в [.nvmrc](.nvmrc).
+
+~~~bash
 npm ci
 npm run dev
-```
+~~~
 
-Открыть с телефона в той же Wi‑Fi-сети:
+Для телефона в той же Wi-Fi-сети:
 
-```bash
+~~~bash
 npm run dev -- --host 0.0.0.0
-```
+~~~
 
-Vite выведет адрес вида `http://192.168.x.x:5173/`. Доступ извне локальной сети в состав проекта не входит; временные tunnel-URL нельзя использовать как production-хостинг.
+Откройте Network URL, который напечатает Vite. Компьютер должен оставаться включённым. Для просмотра вне локальной сети используйте публичное демо выше.
 
-## GitHub и открытое превью
+## Проверка и публикация
 
-Исходники находятся в публичном GitHub-репозитории. Открытая демо-версия публикуется из production-сборки в ветку `gh-pages`:
-
-```bash
-npm run deploy:pages
-```
-
-Режим `github-pages` устанавливает базовый путь `/mega-5g-mobile-demo/`; локальная разработка продолжает работать из корня домена.
-
-## Проверки перед передачей
-
-```bash
+~~~bash
 npm run typecheck
 npm run build
 npm run preview
-```
+npm run build:pages
+npm run preview:pages
+~~~
 
-`npm run check` выполняет полную production-сборку, включая TypeScript-проверку. Папка `dist/` генерируется заново и не хранится в Git.
+GitHub Pages обслуживается из ветки `gh-pages`. После коммита и отправки исходников в `main` обновить опубликованную сборку:
 
-## Структура
+~~~bash
+npm run deploy:pages
+~~~
 
-- `src/components/PromoSection.tsx` — hero и scroll-реакции;
-- `src/components/DetailsSection.tsx` — раскрытие второй секции и technology cards;
-- `src/components/ExperienceCarousel.tsx` — swipe-галерея преимуществ;
-- `src/components/ProductsSection.tsx` — sticky-стопка четырёх профилей;
-- `src/components/TariffsSection.tsx` — только место под будущий embed;
-- `src/components/ConnectSection.tsx` — циклический slider «Как подключить» и статичный FAQ;
-- `src/styles.css` — геометрия прототипа под целевой viewport;
-- `public/assets` и `public/fonts` — runtime-ассеты демо;
-- `docs/ANIMATION_INTEGRATION.md` — подробная спецификация механик, таймингов, cleanup и QA.
+Эта команда публикует текущую production-сборку в удалённую ветку. Vite задаёт base `/mega-5g-mobile-demo/` только в режиме `github-pages`; все локальные ассеты используют `publicAsset()`. `dist/` не хранится в исходной ветке.
 
-## Контракт интеграции
+## Где искать реализацию
 
-1. Переносить следует поведение и последовательность состояний, а не существующую верстку и стили.
-2. Все анимации должны жить в lifecycle продуктовых компонентов, иметь scoped targets и cleanup. Для React здесь используется `useGSAP`.
-3. `ScrollTrigger.config({ ignoreMobileResize: true })` — осознанная защита от скачков при скрытии панелей iOS-браузера. В продукте эту глобальную настройку нужно вынести в animation bootstrap и проверить вместе со всеми scroll-сценариями.
-4. Пути `/assets/...` и `/fonts/...` рассчитаны на размещение в корне домена. Для subpath/CDN нужно настроить `base` либо asset resolver.
-5. Карточки тарифов — четыре пустых `aria-hidden` placeholder. Embed должен заменить контейнер тарифов целиком или удалить `aria-hidden` и восстановить собственную доступную семантику; интерактивный контент нельзя монтировать внутрь скрытых placeholder как есть.
-6. Кнопки входа, меню и выбора профиля, статичный FAQ и большинство элементов footer не подключены к бизнес-логике. Это визуальные integration stubs, для которых разработчики должны назначить реальные URL, handlers и состояния.
-7. Для `prefers-reduced-motion: reduce` интерактивное переключение остаётся доступным, но входные и scroll-анимации отключаются.
+| Путь | Назначение |
+|---|---|
+| [src/motion/cardReveal.ts](src/motion/cardReveal.ts) | Общая анимация внешних карточек и параметры вложенных карточек |
+| [src/components/mobile/mobileCardReveal.ts](src/components/mobile/mobileCardReveal.ts) | Мобильный порог 95% и адаптер общего reveal |
+| [src/components/desktop/desktopCardReveal.ts](src/components/desktop/desktopCardReveal.ts) | Desktop-порог 85% и адаптер общего reveal |
+| [src/App.tsx](src/App.tsx) | Взаимоисключающее монтирование mobile / tablet / desktop |
+| [src/components/mobile](src/components/mobile) | Актуальные MobileIntro, MobileProfiles, MobileLower, свайпы и стили |
+| [src/components/desktop](src/components/desktop) | Актуальные desktop-зоны и Lenis |
+| [public/assets/desktop/final](public/assets/desktop/final), [public/assets/mobile/final](public/assets/mobile/final) | Экспорты текущего Figma; часть desktop-ассетов общая для обеих версий |
 
-## Известные ограничения
-
-- визуальная приемка ограничена iPhone 13 `390 × 844 CSS px`;
-- layout использует фиксированную геометрию и принудительные переносы строк, поэтому не рассчитан на локализацию, text zoom и произвольный контент;
-- mobile-дерево на desktop скрывается CSS, но не размонтируется;
-- FAQ, header-actions, profile-actions и footer-links функционально не реализованы;
-- product visual намеренно использует одну и ту же картинку-плейсхолдер для всех четырёх состояний;
-- Experience содержит четыре карточки, но три логических положения галереи;
-- нестандартный smooth-scroll потребует отдельной интеграции через `scrollerProxy`;
-- права на передачу фирменных изображений и MegaFon Graphik LC должны быть подтверждены владельцем проекта.
-
-## Минимальная ручная QA-матрица
-
-- iPhone 13 / `390 × 844`, portrait, Safari и Chrome iOS;
-- старт страницы, быстрый scroll вниз/вверх и возврат к hero;
-- обе swipe-карусели: горизонтальный жест, вертикальный scroll, быстрый reverse, click и keyboard;
-- все четыре product-card состояния и обратный scroll;
-- `prefers-reduced-motion: reduce`;
-- отсутствие горизонтального overflow, 404 и ошибок в console;
-- контрольный smoke-test на `767px` и desktop-gate на `768px` без требования pixel-perfect.
-
-Подробности: [инструкция по анимациям](docs/ANIMATION_INTEGRATION.md) и [отчёт предрелизного ревью](docs/HANDOFF_REVIEW.md).
+Старые `PromoSection`, `DetailsSection`, `ExperienceCarousel`, `ProductsSection`, `ConnectSection`, `TariffsSection` в корне `src/components/` сохранены как история предыдущего прототипа и **не монтируются**. Они не входят в актуальную моушн-систему. Рабочую мобильную композицию собирает [MobileExperience.tsx](src/components/MobileExperience.tsx).

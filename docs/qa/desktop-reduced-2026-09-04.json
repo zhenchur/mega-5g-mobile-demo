@@ -1,0 +1,10 @@
+{
+  "sharedLoaded": true,
+  "hidden": [
+    {
+      "class": "dl-connect-visual",
+      "panel": "desktop-connect-panel-customer"
+    }
+  ],
+  "lenis": "lenis"
+}
