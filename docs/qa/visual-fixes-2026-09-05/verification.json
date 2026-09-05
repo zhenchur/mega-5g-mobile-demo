@@ -1,7 +1,7 @@
 {
   "date": "2026-09-05",
   "browser": "Microsoft Edge 152.0.4191.62 / Chromium on Windows",
-  "source": "Working tree after V1–V5 fixes; base 4062b4803fe0eab880bbe5e36ed2e0202ac7983e",
+  "source": "Committed code after V1–V5 fixes",
   "command": "npm run qa -- --reporter=list,json",
   "stats": {
     "startTime": "2026-09-05T05:21:52.649Z",
@@ -51,5 +51,7 @@
   "limits": [
     "No physical iPhone/Safari or Android",
     "No FPS measurement"
-  ]
+  ],
+  "codeCommit": "0226ef72a657c473b8ac9950f62553d96a4fa5a9",
+  "pagesCommit": "aef73cffc729b94dbf90903a968105bf34df8f5b"
 }

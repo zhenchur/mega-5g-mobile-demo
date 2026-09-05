@@ -1,0 +1,48 @@
+{
+  "url": "https://zhenchur.github.io/mega-5g-mobile-demo/",
+  "js": "index-BrCBStaF.js",
+  "css": "index-DG87lJ-K.css",
+  "scenarios": [
+    {
+      "version": "mobile",
+      "tech": [
+        {
+          "opacity": "1",
+          "visibility": "visible"
+        },
+        {
+          "opacity": "1",
+          "visibility": "visible"
+        }
+      ],
+      "state": {
+        "focused": true,
+        "opacity": 1,
+        "overflow": false,
+        "broken": []
+      }
+    },
+    {
+      "version": "desktop",
+      "tech": [
+        {
+          "opacity": "1",
+          "visibility": "visible"
+        },
+        {
+          "opacity": "1",
+          "visibility": "visible"
+        }
+      ],
+      "state": {
+        "focused": true,
+        "opacity": 1,
+        "overflow": false,
+        "broken": []
+      }
+    }
+  ],
+  "errors": [],
+  "codeCommit": "0226ef72a657c473b8ac9950f62553d96a4fa5a9",
+  "pagesCommit": "aef73cffc729b94dbf90903a968105bf34df8f5b"
+}
