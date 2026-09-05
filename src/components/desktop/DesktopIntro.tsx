@@ -3,13 +3,12 @@ import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { publicAsset } from '../../publicAsset'
+import { PROMO_MOTION } from '../../motion/tokens'
 import { createDesktopCardReveal } from './desktopCardReveal'
 import './desktop-intro.css'
 
 const introAsset = (name: string) => publicAsset(`assets/desktop/intro/${name}`)
 const finalIntroAsset = (name: string) => publicAsset(`assets/desktop/final/intro/${name}`)
-const HERO_CONTENT_RISE = -48
-const HERO_CONTENT_END_SCALE = 0.88
 
 gsap.registerPlugin(useGSAP, ScrollTrigger)
 
@@ -266,12 +265,12 @@ export function DesktopIntro() {
             content,
             { y: 0, scale: 1, transformOrigin: '50% 50%' },
             {
-              y: HERO_CONTENT_RISE,
-              scale: HERO_CONTENT_END_SCALE,
-              duration: 0.68,
-              ease: 'power1.in',
+              y: PROMO_MOTION.desktopRise,
+              scale: PROMO_MOTION.endScale,
+              duration: PROMO_MOTION.contentDuration,
+              ease: PROMO_MOTION.ease,
             },
-            0.04,
+            PROMO_MOTION.contentStart,
           )
 
         const pinStart = () => timeline.scrollTrigger?.start ?? 0
@@ -291,7 +290,6 @@ export function DesktopIntro() {
             trigger: stage,
             start: technologyEntranceStart,
             end: () => Math.max(technologyEntranceStart() + 1, pinEnd()),
-            invalidateOnRefresh: true,
             toggleActions: 'play none none reverse',
           },
         })

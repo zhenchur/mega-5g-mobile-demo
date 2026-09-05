@@ -1,0 +1,121 @@
+[
+  {
+    "point": [
+      210,
+      310
+    ],
+    "figma": [
+      238,
+      237,
+      245
+    ],
+    "demo": [
+      239,
+      238,
+      245
+    ],
+    "maxChannelDifference": 1
+  },
+  {
+    "point": [
+      435,
+      310
+    ],
+    "figma": [
+      235,
+      232,
+      244
+    ],
+    "demo": [
+      236,
+      232,
+      244
+    ],
+    "maxChannelDifference": 1
+  },
+  {
+    "point": [
+      658,
+      310
+    ],
+    "figma": [
+      231,
+      224,
+      242
+    ],
+    "demo": [
+      232,
+      224,
+      243
+    ],
+    "maxChannelDifference": 1
+  },
+  {
+    "point": [
+      210,
+      600
+    ],
+    "figma": [
+      240,
+      242,
+      245
+    ],
+    "demo": [
+      240,
+      242,
+      245
+    ],
+    "maxChannelDifference": 0
+  },
+  {
+    "point": [
+      660,
+      600
+    ],
+    "figma": [
+      237,
+      235,
+      244
+    ],
+    "demo": [
+      238,
+      236,
+      245
+    ],
+    "maxChannelDifference": 1
+  },
+  {
+    "point": [
+      210,
+      705
+    ],
+    "figma": [
+      240,
+      241,
+      245
+    ],
+    "demo": [
+      240,
+      242,
+      245
+    ],
+    "maxChannelDifference": 1
+  },
+  {
+    "point": [
+      660,
+      705
+    ],
+    "figma": [
+      239,
+      238,
+      245
+    ],
+    "demo": [
+      239,
+      239,
+      245
+    ],
+    "maxChannelDifference": 1
+  }
+]

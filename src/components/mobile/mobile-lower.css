@@ -77,7 +77,7 @@
 .mf-mobile-faq-items { display: flex; flex-direction: column; gap: 8px; }
 .mf-mobile-faq-row { width: 100%; padding: 20px; border: 0; border-radius: 12px; background: var(--mf-mobile-lower-card); color: #333; text-align: left; }
 .mf-mobile-faq-row header,
-.mf-mobile-faq-row--closed { display: flex; align-items: center; justify-content: space-between; }
+.mf-mobile-faq-row--closed { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .mf-mobile-faq-row h3,
 .mf-mobile-faq-row--closed span { flex: 1; min-width: 0; font-size: 15px; font-weight: 500; line-height: 24px; }
 .mf-mobile-faq-row img { flex: 0 0 32px; width: 32px; height: 32px; }

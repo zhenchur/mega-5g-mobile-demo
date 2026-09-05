@@ -3,13 +3,13 @@ import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { publicAsset } from '../../publicAsset'
+import { PROMO_MOTION } from '../../motion/tokens'
 import { createMobileCardReveal, MOBILE_CARD_REVEAL_START } from './mobileCardReveal'
 import './mobile-intro.css'
 
 gsap.registerPlugin(useGSAP, ScrollTrigger)
 
 const HEADER_HEIGHT = 56
-const HERO_CONTENT_END_SCALE = 0.88
 
 const technologies = [
   {
@@ -66,10 +66,10 @@ export function MobileIntro() {
           duration: 1,
         }, 0)
         .fromTo(heroContent, { scale: 1, transformOrigin: '50% 50%' }, {
-          scale: HERO_CONTENT_END_SCALE,
-          duration: 0.68,
-          ease: 'power1.in',
-        }, 0.04)
+          scale: PROMO_MOTION.endScale,
+          duration: PROMO_MOTION.contentDuration,
+          ease: PROMO_MOTION.ease,
+        }, PROMO_MOTION.contentStart)
 
       root.querySelectorAll<HTMLElement>('.mf-mobile-technology-slot').forEach((slot, index) => {
         const rise = slot.querySelector<HTMLElement>('.mf-mobile-technology-rise')
@@ -81,7 +81,6 @@ export function MobileIntro() {
             id: `mobile-technology-card-entrance-${index}`,
             trigger: slot,
             start: MOBILE_CARD_REVEAL_START,
-            invalidateOnRefresh: true,
             toggleActions: 'play none none reverse',
           },
         })

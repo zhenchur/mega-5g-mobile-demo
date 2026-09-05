@@ -1,0 +1,55 @@
+{
+  "date": "2026-09-05",
+  "browser": "Microsoft Edge 152.0.4191.62 / Chromium on Windows",
+  "source": "Working tree after V1–V5 fixes; base 4062b4803fe0eab880bbe5e36ed2e0202ac7983e",
+  "command": "npm run qa -- --reporter=list,json",
+  "stats": {
+    "startTime": "2026-09-05T05:21:52.649Z",
+    "duration": 72614.03899999999,
+    "expected": 36,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "projects": [
+    "mobile: 360×800, touch",
+    "desktop: 1440×900"
+  ],
+  "newRegressions": [
+    "technology card visibility on forward/reverse scroll and media change (both layouts)",
+    "focused duration after repeated media recreation and resize/refresh, then blur/reset/replay (both layouts)"
+  ],
+  "builds": {
+    "normal": {
+      "passed": true,
+      "js": "index-Bbl7eVOV.js",
+      "css": "index-C7kQ8wvX.css"
+    },
+    "githubPages": {
+      "passed": true,
+      "js": "index-BrCBStaF.js",
+      "css": "index-DG87lJ-K.css"
+    }
+  },
+  "visual": {
+    "footerWidths": [
+      1280,
+      1360,
+      1440,
+      1920
+    ],
+    "faqWidths": [
+      320,
+      360,
+      390,
+      430
+    ],
+    "gradientSampleCount": 7,
+    "maxGradientChannelDifference": 1,
+    "allFiveFindingsFixed": true
+  },
+  "limits": [
+    "No physical iPhone/Safari or Android",
+    "No FPS measurement"
+  ]
+}

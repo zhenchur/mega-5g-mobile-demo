@@ -1,6 +1,6 @@
 # Мега 5G — общая motion-система
 
-Версия: 4 сентября 2026. Область: текущие desktop и mobile. Документ описывает поведение демо и параметры, которые нужно воспроизвести в продуктовой реализации. Состояние проверок и публикации фиксируется отдельно в [HANDOFF_REVIEW.md](HANDOFF_REVIEW.md).
+Версия: 5 сентября 2026. Область: текущие desktop и mobile. Документ описывает поведение демо и параметры, которые нужно воспроизвести в продуктовой реализации. Состояние проверок и публикации фиксируется отдельно в [HANDOFF_REVIEW.md](HANDOFF_REVIEW.md).
 
 ## 1. Быстрый ориентир
 
@@ -27,7 +27,8 @@
 
 | Что искать | Источник |
 |---|---|
-| Общий вход родителя и параметры вложенного входа | [motion/cardReveal.ts](../src/motion/cardReveal.ts) |
+| Общий вход родителя и параметры вложенного входа | [cardReveal.ts](../src/motion/cardReveal.ts), [profileCardReveal.ts](../src/motion/profileCardReveal.ts) |
+| Видимость при фокусе, токены промо/вкладок | [completeOnFocus.ts](../src/motion/completeOnFocus.ts), [tokens.ts](../src/motion/tokens.ts) |
 | Desktop-линия входа и aliases общего helper | [desktopCardReveal.ts](../src/components/desktop/desktopCardReveal.ts) |
 | Mobile-линия входа и aliases общего helper | [mobileCardReveal.ts](../src/components/mobile/mobileCardReveal.ts) |
 | Desktop pin, промо, технологии | [DesktopIntro.tsx](../src/components/desktop/DesktopIntro.tsx), [desktop-intro.css](../src/components/desktop/desktop-intro.css) |
@@ -35,11 +36,14 @@
 | Профили, родительские и вложенные входы | [DesktopProfiles.tsx](../src/components/desktop/DesktopProfiles.tsx), [MobileProfiles.tsx](../src/components/mobile/MobileProfiles.tsx) |
 | Hover/focus иллюстраций desktop | [desktop-profiles.css](../src/components/desktop/desktop-profiles.css) |
 | Mobile swipe и геометрия рядов | [useStackSwipe.ts](../src/components/mobile/useStackSwipe.ts), [useHorizontalSlider.ts](../src/components/mobile/useHorizontalSlider.ts), [mobile-profiles.css](../src/components/mobile/mobile-profiles.css) |
-| Connect tabs, entrance, FAQ | [DesktopLower.tsx](../src/components/desktop/DesktopLower.tsx), [MobileLower.tsx](../src/components/mobile/MobileLower.tsx) |
+| Connect tabs и entrance | [DesktopConnect.tsx](../src/components/desktop/DesktopConnect.tsx), [MobileConnect.tsx](../src/components/mobile/MobileConnect.tsx), [useConnectTabs.ts](../src/interactions/useConnectTabs.ts) |
+| FAQ и footer | Отдельные DesktopFaq/MobileFaq и DesktopFooter/MobileFooter; Lower собирает эти зоны |
+| Общий распознаватель пошагового жеста | [stepSwipe.ts](../src/interactions/stepSwipe.ts) |
+| Первый переход по якорю | [useInitialHash.ts](../src/navigation/useInitialHash.ts) |
 | Lenis и его cleanup | [DesktopExperience.tsx](../src/components/desktop/DesktopExperience.tsx) |
 | Мобильная композиция и фиксированная шапка | [MobileExperience.tsx](../src/components/MobileExperience.tsx) |
 
-Файлы `PromoSection.tsx`, `DetailsSection.tsx`, `ProductsSection.tsx`, `ExperienceCarousel.tsx`, `ConnectSection.tsx`, `TariffsSection.tsx` и `FooterSection.tsx` относятся к прежней мобильной реализации и **не входят в текущее дерево**. Их анимации, старые sticky-стопки и тарифная карусель не являются частью этой спецификации.
+Предыдущая мобильная реализация удалена при очистке 5 сентября 2026; состав удаления указан в [повторном аудите](CODE_REVIEW_FOLLOWUP.md). Её старые sticky-стопки и тарифная карусель не являются частью этой спецификации. Для переноса используйте текущие источники из таблицы выше; история прототипа доступна в Git.
 
 ## 3. Словарь и параметры
 
@@ -52,8 +56,8 @@
 | `CARD_REVEAL_RISE` | 120 | Общий rise крупных карточек |
 | `CARD_REVEAL_TIMING.duration` | 0.84 | Крупные и вложенные входы |
 | `CARD_REVEAL_TIMING.ease` | `power3.out` | Крупные и вложенные входы |
-| Начальные `rotationX / z / autoAlpha` | −68 / −36 / 0 | Визуальная поверхность крупной карточки |
-| Конечные `rotationX / z / autoAlpha` | 0 / 0 / 1 | Та же поверхность |
+| Начальные `rotationX / z / opacity` | −68 / −36 / 0 | Визуальная поверхность крупной карточки |
+| Конечные `rotationX / z / opacity` | 0 / 0 / 1 | Та же поверхность |
 | `transformPerspective` | 900 | Общий helper входа |
 | `transformOrigin` крупной карточки | `50% 0%` | Поворот от верхнего края |
 | `NESTED_CARD_REVEAL.rise` | 32 | Маленькие карточки |
@@ -71,7 +75,9 @@
 | Порог переключения свайпом | 24 | Обе mobile-галереи |
 | Шаг глубины boost-стопки | 8 | Только boost |
 
-`autoAlpha` одновременно управляет opacity и visibility. Общий helper задает `will-change` на время входа и очищает это свойство при завершении. Для 3D применяется `transformPerspective` на самой карточке; добавленная CSS `perspective` на родительском rise изменила бы итоговую пластику.
+Вход использует `opacity`, сохраняя элементы в порядке Tab. При фокусе внутри карточки её вход сразу завершается; пока фокус остаётся внутри, reverse не скрывает управление. До начала входа указатель блокируется через `pointer-events`. `autoAlpha` (opacity и visibility) остаётся у crossfade неактивных панелей и у отдельных визуальных переходов. Общий helper задает `will-change` на время входа и очищает это свойство при завершении. Для 3D применяется `transformPerspective` на самой карточке; добавленная CSS `perspective` на родительском rise изменила бы итоговую пластику.
+
+Начальное скрытие внешних карточек задаёт этот helper; дополнительного `visibility: hidden` в CSS нет. Значения entrance постоянны, поэтому `createCardReveal` отключает `invalidateOnRefresh` для своих tweens. ScrollTrigger по-прежнему пересчитывает геометрию start/end при refresh. Это сохраняет видимость и конечный transform сфокусированной карточки после смены reduced motion и resize. Динамические значения scroll-промо пересчитываются своим сценарием.
 
 ## 4. Карта анимационных зон
 
@@ -100,8 +106,8 @@
 ```text
 slot                         ← измерение позиции / ScrollTrigger
 └── rise                     ← y: 120 → 0
-    └── card                 ← rotationX: −68 → 0, z: −36 → 0,
-        └── content             autoAlpha: 0 → 1
+    └── card                 ← rotationX: −68 → 0, z: −36 → 0, opacity: 0 → 1
+        └── content          ← статичное содержимое
 ```
 
 Оба tween стартуют одновременно, длятся 0.84 s и используют `power3.out`. У helper нет дополнительного scale крупной карточки. Значение perspective остается 900 и в конце входа; поворот и z становятся нулевыми.
@@ -116,7 +122,9 @@ slot                         ← измерение позиции / ScrollTrigg
 | Остановка scroll после start | Вход заканчивается по времени |
 | Дальнейшая прокрутка вниз | Видимая карточка остается в конечном состоянии |
 | Прокрутка вверх, но еще ниже start | Карточка остается видимой |
-| Возврат выше start | Timeline играет назад с текущего прогресса |
+| Возврат выше start | Timeline играет назад с текущего прогресса, если внутри нет фокуса |
+| Фокус внутри входящей карточки | Вход сразу завершается; reverse не скрывает активное управление |
+| Уход фокуса выше start | Отложенный reverse и сброс nested выполняются; следующий вход повторяет stagger |
 | Быстрый разворот вниз во время reverse | Играет вперед с текущего прогресса |
 | Новая загрузка с восстановленным scroll | Геометрия и пороги рассчитываются для текущего положения |
 
@@ -178,7 +186,7 @@ profiles                      ← секция 3, обычный поток
 
 ## 7. Вложенные карточки
 
-В каждом из двух родителей — boost и «Мегаскорость» — три вложенных элемента. У них отдельная paused timeline. Каждый элемент получает `y: 32 → 0`, `autoAlpha: 0 → 1`, 0.84 s, `power3.out`; последовательные старты: 0, 0.08 и 0.16 s. Полная последовательность от ее запуска занимает 1.00 s и не удлиняет родительскую timeline.
+В каждом из двух родителей — boost и «Мегаскорость» — три вложенных элемента. У них отдельная paused timeline. Каждый элемент получает `y: 32 → 0`, `opacity: 0 → 1`, 0.84 s, `power3.out`; последовательные старты: 0, 0.08 и 0.16 s. Полная последовательность от ее запуска занимает 1.00 s и не удлиняет родительскую timeline.
 
 | Условие / событие | Desktop | Mobile |
 |---|---|---|
@@ -200,7 +208,7 @@ profiles                      ← секция 3, обычный поток
 крупный slot → rise → card
 └── viewport / fieldset       ← layout и область жеста
     └── item / label          ← boost x/scale/alpha ИЛИ позиция scrollLeft
-        └── item-rise         ← только nested y/autoAlpha + фон и содержимое
+        └── item-rise         ← только nested y/opacity + фон и содержимое
 ```
 
 Фон и все содержимое маленькой карточки находятся на ее внутреннем rise. Внешняя оболочка сохраняет ширину, gap, `offsetLeft`, radio-семантику и вычисления свайпа. Нельзя давать nested entrance и swipe одним и тем же GSAP-target: `killTweensOf()` при перелистывании уничтожил бы вход, а параллельные transform/opacity перезаписывали бы друг друга.
@@ -239,7 +247,7 @@ profiles                      ← секция 3, обычный поток
 
 Обе мобильные области сохраняют `touch-action: pan-y pinch-zoom`: вертикальный жест прокручивает страницу, масштабирование страницы остается доступным. Горизонтальный жест подавляет следующий синтетический click, чтобы отпускание после свайпа не выбирало карточку. Новое нажатие сбрасывает подавление; клавиатурный click проходит.
 
-Boost поддерживает touch-события и pointer для остальных устройств, избегая двойной обработки touch. Длительности используют Pointer Events. При переносе нужно сохранить завершение жеста по финальным координатам `pointerup` / `touchend`, отмену при cancel и обработку перехода implicit pointer capture с label на viewport. Оба механизма удаляют listeners и observers при unmount.
+Boost поддерживает touch-события и pointer для остальных устройств, избегая двойной обработки touch. Длительности используют Pointer Events. При переносе нужно сохранить завершение жеста по финальным координатам `pointerup` / `touchend`, отмену при cancel и обработку перехода implicit pointer capture с label на viewport. Общий `bindStepSwipe` отслеживает завершение и движение на document, включая выход за границы ряда до фиксации оси. Потеря кнопки мыши, blur окна, скрытие страницы, cancel/capture loss и второе касание отменяют жест. После отпускания hover не может вызвать переключение. Оба адаптера удаляют listeners и observers при unmount.
 
 ## 9. Connect: вход и вкладки
 
@@ -301,6 +309,8 @@ Mobile использует scroll окна без Lenis и без глобал�
 
 В mobile intro после `document.fonts.ready` выполняется refresh с проверкой, что компонент не размонтирован. Новая продуктовая реализация должна также обновлять измерения после своих изменений геометрии. Вызов `ScrollTrigger.refresh()` на каждом scroll-кадре не является частью сценария.
 
+Свежая ссылка с `#profiles` / `#connect` на mobile или `#desktop-profiles` / `#desktop-connect` на desktop разрешается после mount, готовности шрифтов и refresh геометрии. Reload и back/forward сохраняют нативное восстановление позиции. Пользовательский ввод до завершения подготовки отменяет отложенный переход.
+
 ## 12. Сценарии приемки при переносе
 
 Эта таблица задает ожидаемое поведение, а не подтверждает прохождение проверок. Фактические результаты, браузеры и ограничения см. в [HANDOFF_REVIEW.md](HANDOFF_REVIEW.md).
@@ -323,9 +333,14 @@ Mobile использует scroll окна без Lenis и без глобал�
 | Connect: Tab/Left/Right/Home/End | Активный tab и panel согласованы, скрытая панель не принимает focus |
 | FAQ / footer | Видимы; у FAQ только entrance, footer статичен |
 | Live reduce посреди движения | Контент видим, выбранные состояния доступны, старые pin/entrance стили очищены |
+| Фокус в radio → scroll вверх → reduce/normal → resize → возврат | Parent и nested видимы, rise/rotation/z в конечном состоянии; blur выше порога снова разрешает reset/replay |
+| Desktop технологии при обычном motion | Обе карточки видимы после входа: проверять opacity вместе с visibility и родительскими стилями |
 | Resize и browser bars | После измерения пороги актуальны; mobile стык не получает JS-перемещения, галереи сохраняют логическое состояние |
 | Границы 767↔768 и 1279↔1280 | Одна версия, без дублирующихся GSAP triggers и Lenis |
-| Reload/deep link ниже первого экрана | Нужные карточки не остаются невидимыми, табы и жесты работают |
+| Свежая deep link / reload после ухода от якоря | Первый переход ставит секцию под шапку; reload сохраняет последнюю позицию пользователя |
+| Tab с первого экрана до профилей и radio | Управление не пропускается; родитель и вложенная поверхность сразу видимы при фокусе |
+| Отпускание мыши вне ряда до фиксации оси | Возврат курсора без нажатия не листает галерею |
+| Connect customer: ширина 390 → 320 | Высота контейнера совпадает с новой высотой активной панели |
 | Опубликованный GitHub Pages subpath | Загружаются JS, CSS, шрифты и изображения; якоря и оба диапазона работают |
 
 Для браузерной проверки нужны мобильные ширины 320, 360, 390 и 767 px, desktop 1280 и 1440 px, промежуточный диапазон и разные высоты viewport. Прокрутку проверяют в движении и при резком развороте, а не только после остановки. Проверка в Chromium с touch-эмуляцией не подтверждает результат на физическом iPhone; Safari/iOS с изменением browser bars — отдельный контроль.

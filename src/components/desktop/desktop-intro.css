@@ -391,13 +391,6 @@
   will-change: transform;
 }
 
-.desktop-intro.is-motion-ready .desktop-intro__technology {
-  /* Both cards wait for their tween, including the staggered second card.
-     Removing is-motion-ready restores visible content for reduced motion. */
-  opacity: 0;
-  visibility: hidden;
-}
-
 .desktop-intro__technologies {
   padding-block: 96px;
 }

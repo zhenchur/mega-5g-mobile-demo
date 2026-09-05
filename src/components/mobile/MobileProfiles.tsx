@@ -3,8 +3,8 @@ import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { publicAsset } from '../../publicAsset'
-import { NESTED_CARD_REVEAL } from '../../motion/cardReveal'
-import { createMobileCardReveal, MOBILE_CARD_REVEAL_START, MOBILE_CARD_REVEAL_TIMING, MOBILE_CARD_REVEAL_VIEWPORT_RATIO } from './mobileCardReveal'
+import { createProfileCardReveal } from '../../motion/profileCardReveal'
+import { MOBILE_CARD_REVEAL_START, MOBILE_CARD_REVEAL_VIEWPORT_RATIO } from './mobileCardReveal'
 import { useStackSwipe } from './useStackSwipe'
 import { useHorizontalSlider } from './useHorizontalSlider'
 import './mobile-profiles.css'
@@ -268,85 +268,22 @@ export function MobileProfiles() {
         const rise = slot.querySelector<HTMLElement>('.mf-mobile-profile-reveal__content')
         const card = rise?.querySelector<HTMLElement>('.mf-mobile-profile, .mf-mobile-boost')
         if (!rise || !card) return
-        // Inner surfaces reveal independently of the outer swipe/layout items.
-        const nestedItems = card.querySelectorAll<HTMLElement>(
-          '.mf-mobile-boost__item-rise, .mf-mobile-duration__rise',
-        )
-        const nestedViewport = card.querySelector<HTMLElement>(
-          '.mf-mobile-boost__viewport, .mf-mobile-profile__durations',
-        )
-        const nestedReveal = nestedItems.length
-          ? gsap.timeline({
-            id: card.classList.contains('mf-mobile-boost')
-              ? 'mobile-boost-items-entrance'
-              : 'mobile-duration-items-entrance',
-            paused: true,
-          })
-          : null
-        nestedItems.forEach((item, itemIndex) => {
-          nestedReveal!.fromTo(item, {
-            y: NESTED_CARD_REVEAL.rise,
-            autoAlpha: 0,
-          }, {
-            y: 0,
-            autoAlpha: 1,
-            ...MOBILE_CARD_REVEAL_TIMING,
-            immediateRender: true,
-          }, itemIndex * NESTED_CARD_REVEAL.stagger)
+        createProfileCardReveal({
+          slot, rise, card,
+          id: 'mobile-profile-card-entrance-' + index,
+          start: MOBILE_CARD_REVEAL_START,
+          // Inner surfaces own the entrance; outer items own the swipe.
+          nestedItems: Array.from(card.querySelectorAll<HTMLElement>(
+            '.mf-mobile-boost__item-rise, .mf-mobile-duration__rise',
+          )),
+          nestedScope: card.querySelector<HTMLElement>(
+            '.mf-mobile-boost__viewport, .mf-mobile-profile__durations',
+          ),
+          nestedId: card.classList.contains('mf-mobile-boost')
+            ? 'mobile-boost-items-entrance' : 'mobile-duration-items-entrance',
+          nestedViewportRatio: MOBILE_CARD_REVEAL_VIEWPORT_RATIO,
+          nestedTriggerId: 'mobile-nested-card-entrance-' + index,
         })
-
-        let nestedStarted = false
-        const resetNested = () => {
-          nestedStarted = false
-          nestedReveal?.pause(0)
-        }
-
-        const parentReveal = createMobileCardReveal({
-          items: [{ rise, card }],
-          scrollTrigger: {
-            id: 'mobile-profile-card-entrance-' + index,
-            trigger: slot,
-            start: MOBILE_CARD_REVEAL_START,
-            invalidateOnRefresh: true,
-            toggleActions: 'play none none reverse',
-            onLeaveBack: nestedReveal ? resetNested : undefined,
-          },
-        })
-
-        if (nestedReveal) {
-          let nestedTrigger: ScrollTrigger | null = null
-          const revealNested = () => {
-            if (!nestedStarted && !parentReveal.reversed()
-              && parentReveal.progress() >= NESTED_CARD_REVEAL.parentProgress
-              && nestedTrigger && nestedTrigger.scroll() >= nestedTrigger.start) {
-              nestedStarted = true
-              nestedReveal.play(0)
-            }
-          }
-          if (nestedViewport) {
-            nestedTrigger = ScrollTrigger.create({
-              id: 'mobile-nested-card-entrance-' + index,
-              trigger: slot,
-              start: () => {
-                // Measure layout offsets, unaffected by the parent's entrance
-                // transforms. Tall mobile cards reveal their inner row on sight.
-                let top = 0
-                let element: HTMLElement | null = nestedViewport
-                while (element) {
-                  top += element.offsetTop
-                  element = element.offsetParent as HTMLElement | null
-                }
-                return top - window.innerHeight * MOBILE_CARD_REVEAL_VIEWPORT_RATIO
-              },
-              end: '+=1',
-              invalidateOnRefresh: true,
-              onEnter: revealNested,
-              onLeaveBack: resetNested,
-            })
-          }
-          parentReveal.eventCallback('onUpdate', revealNested)
-          revealNested()
-        }
       })
     })
     return () => media.revert()

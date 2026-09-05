@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { MobileExperience } from './components/MobileExperience'
 import { DesktopExperience } from './components/desktop/DesktopExperience'
 import { publicAsset } from './publicAsset'
+import { useInitialHash } from './navigation/useInitialHash'
 
 type ViewportMode = 'mobile' | 'tablet' | 'desktop'
 
@@ -37,6 +38,7 @@ function TabletGate() {
 
 export default function App() {
   const [viewportMode, setViewportMode] = useState<ViewportMode>(getViewportMode)
+  useInitialHash(viewportMode)
 
   useEffect(() => {
     const mobileQuery = window.matchMedia('(max-width: 767px)')

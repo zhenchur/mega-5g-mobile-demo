@@ -1,0 +1,28 @@
+{
+  "date": "2026-09-05T04:40:03.491Z",
+  "browser": "152.0.4191.62",
+  "cases": [
+    {
+      "width": 360,
+      "top": 56,
+      "y": 3460,
+      "font": true,
+      "broken": [],
+      "overflow": false,
+      "errors": [],
+      "failures": [],
+      "pass": true
+    },
+    {
+      "width": 1440,
+      "top": 101,
+      "y": 3758,
+      "font": true,
+      "broken": [],
+      "overflow": false,
+      "errors": [],
+      "failures": [],
+      "pass": true
+    }
+  ]
+}

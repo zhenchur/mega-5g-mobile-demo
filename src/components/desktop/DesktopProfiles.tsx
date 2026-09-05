@@ -3,8 +3,8 @@ import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { publicAsset } from '../../publicAsset'
-import { NESTED_CARD_REVEAL } from '../../motion/cardReveal'
-import { createDesktopCardReveal, DESKTOP_CARD_REVEAL_START, DESKTOP_CARD_REVEAL_TIMING } from './desktopCardReveal'
+import { createProfileCardReveal } from '../../motion/profileCardReveal'
+import { DESKTOP_CARD_REVEAL_START } from './desktopCardReveal'
 import './desktop-profiles.css'
 
 gsap.registerPlugin(useGSAP, ScrollTrigger)
@@ -290,63 +290,19 @@ export function DesktopProfiles() {
           const card = rise?.querySelector<HTMLElement>('.desktop-profile-card')
           if (!rise || !card) return
 
-          const nestedItems = card.querySelectorAll<HTMLElement>(
-            '.desktop-profile-boost__item-rise, .desktop-profile-card__duration-rise',
-          )
-          // Playback is independent of the parent's duration, but starts from
-          // its progress rather than a second viewport/geometry trigger.
-          const nestedReveal = nestedItems.length
-            ? gsap.timeline({
-              id: card.classList.contains('desktop-profile-boost')
-                ? 'desktop-boost-items-entrance'
-                : 'desktop-duration-items-entrance',
-              paused: true,
-            })
-            : null
-          nestedItems.forEach((item, itemIndex) => {
-            nestedReveal!.fromTo(item, {
-              y: NESTED_CARD_REVEAL.rise,
-              autoAlpha: 0,
-            }, {
-              y: 0,
-              autoAlpha: 1,
-              ...DESKTOP_CARD_REVEAL_TIMING,
-              immediateRender: true,
-            }, itemIndex * NESTED_CARD_REVEAL.stagger)
+          createProfileCardReveal({
+            slot, rise, card,
+            id: 'desktop-profile-card-entrance-' + index,
+            start: DESKTOP_CARD_REVEAL_START,
+            nestedItems: Array.from(card.querySelectorAll<HTMLElement>(
+              '.desktop-profile-boost__item-rise, .desktop-profile-card__duration-rise',
+            )),
+            nestedScope: card.querySelector<HTMLElement>(
+              '.desktop-profile-boost__items, .desktop-profile-card__duration-group',
+            ),
+            nestedId: card.classList.contains('desktop-profile-boost')
+              ? 'desktop-boost-items-entrance' : 'desktop-duration-items-entrance',
           })
-
-          let nestedStarted = false
-          const resetNested = () => {
-            nestedStarted = false
-            nestedReveal?.pause(0)
-          }
-
-          const parentReveal = createDesktopCardReveal({
-            items: [{ rise, card }],
-            scrollTrigger: {
-              id: 'desktop-profile-card-entrance-' + index,
-              trigger: slot,
-              start: DESKTOP_CARD_REVEAL_START,
-              invalidateOnRefresh: true,
-              toggleActions: 'play none none reverse',
-              // Reset immediately when the parent starts reversing, not when
-              // its playhead eventually crosses the launch point again.
-              onLeaveBack: nestedReveal ? resetNested : undefined,
-            },
-          })
-
-          if (nestedReveal) {
-            const revealNested = () => {
-              if (!nestedStarted && !parentReveal.reversed()
-                && parentReveal.progress() >= NESTED_CARD_REVEAL.parentProgress) {
-                nestedStarted = true
-                nestedReveal.play(0)
-              }
-            }
-            parentReveal.eventCallback('onUpdate', revealNested)
-            // Covers setup after scroll restoration or a deep-link jump.
-            revealNested()
-          }
         })
       },
     )

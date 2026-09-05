@@ -1,0 +1,37 @@
+[
+  {
+    "width": 767,
+    "scrollWidth": 767,
+    "mobile": true,
+    "desktop": false,
+    "tablet": false
+  },
+  {
+    "width": 768,
+    "scrollWidth": 768,
+    "mobile": false,
+    "desktop": false,
+    "tablet": true
+  },
+  {
+    "width": 1279,
+    "scrollWidth": 1279,
+    "mobile": false,
+    "desktop": false,
+    "tablet": true
+  },
+  {
+    "width": 1280,
+    "scrollWidth": 1280,
+    "mobile": false,
+    "desktop": true,
+    "tablet": false
+  },
+  {
+    "width": 767,
+    "scrollWidth": 767,
+    "mobile": true,
+    "desktop": false,
+    "tablet": false
+  }
+]

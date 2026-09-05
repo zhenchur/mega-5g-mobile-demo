@@ -119,8 +119,19 @@
   height: 440px;
   overflow: hidden;
   border-radius: 24px;
+  /* Sample RGB and alpha separately at t = n/8 between white/0 and purple/.5
+     to match this Figma export despite CSS's premultiplied interpolation. */
   background:
-    linear-gradient(37.5691165465deg, rgb(255 255 255 / 0%) 3.4865%, rgb(201 164 232 / 50%) 135.65%),
+    linear-gradient(37.5691165465deg,
+      rgb(255 255 255 / 0%) 3.4865%,
+      rgb(248.25 243.625 252.125 / 6.25%) 20.0069375%,
+      rgb(241.5 232.25 249.25 / 12.5%) 36.527375%,
+      rgb(234.75 220.875 246.375 / 18.75%) 53.0478125%,
+      rgb(228 209.5 243.5 / 25%) 69.56825%,
+      rgb(221.25 198.125 240.625 / 31.25%) 86.0886875%,
+      rgb(214.5 186.75 237.75 / 37.5%) 102.609125%,
+      rgb(207.75 175.375 234.875 / 43.75%) 119.1295625%,
+      rgb(201 164 232 / 50%) 135.65%),
     #f0f2f5;
 }
 
@@ -359,7 +370,7 @@
 }
 
 .dl-footer__inner {
-  width: min(1280px, 100%);
+  width: min(1280px, calc(100% - 64px));
   height: 641.4px;
   margin: 0 auto;
 }
@@ -374,21 +385,21 @@
   display: grid;
   width: 100%;
   height: 160.8px;
-  grid-template-columns: 960px 320px;
+  grid-template-columns: minmax(0, 1fr) 320px;
 }
 
 .dl-footer-navigation__bottom {
   display: grid;
   width: 100%;
   height: 227.8px;
-  grid-template-columns: 960px 320px;
+  grid-template-columns: minmax(0, 1fr) 320px;
   padding-top: 36px;
 }
 
 .dl-footer-navigation__columns {
   display: grid;
-  width: 960px;
-  grid-template-columns: repeat(4, 240px);
+  min-width: 0;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 .dl-footer-navigation__top .dl-footer-navigation__columns {
@@ -400,7 +411,7 @@
 }
 
 .dl-footer-nav-group {
-  width: 240px;
+  min-width: 0;
 }
 
 .dl-footer-nav-group h2,
@@ -587,7 +598,7 @@
   display: grid;
   width: 100%;
   height: 100.8px;
-  grid-template-columns: 630px 630px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   grid-template-rows: 80px;
   align-items: center;
   gap: 20px;
@@ -597,8 +608,8 @@
 
 .dl-footer-privacy {
   display: flex;
-  width: 630px;
-  height: 60px;
+  width: 100%;
+  min-height: 60px;
   align-items: flex-start;
 }
 
@@ -618,8 +629,8 @@
 }
 
 .dl-footer-privacy__copy {
-  width: 586px;
-  height: 60px;
+  min-width: 0;
+  flex: 1;
   color: #999;
   font-size: 12px;
   font-weight: 400;
@@ -627,8 +638,8 @@
 }
 
 .dl-footer-privacy__copy p {
-  width: 586px;
-  height: 32px;
+  width: 100%;
+  min-height: 32px;
   margin: 0 0 12px;
 }
 
@@ -644,7 +655,7 @@
 
 .dl-footer-subscribe {
   display: flex;
-  width: 630px;
+  width: 100%;
   height: 80px;
   align-items: center;
   justify-content: space-between;
@@ -785,10 +796,4 @@
   width: 100px;
   height: 32px;
   flex: 0 0 100px;
-}
-
-@media (min-width: 1280px) and (max-width: 1359px) {
-  .dl-footer__inner {
-    width: 1280px;
-  }
 }

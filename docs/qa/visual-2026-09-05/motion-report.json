@@ -1,0 +1,74 @@
+{
+  "errors": [],
+  "shots": [
+    {
+      "name": "mobile",
+      "key": "seam-forward",
+      "path": ".codex/visual-audit-2026-09-05/motion-mobile-seam-forward.png",
+      "scrollY": 580
+    },
+    {
+      "name": "mobile",
+      "key": "seam-reverse",
+      "path": ".codex/visual-audit-2026-09-05/motion-mobile-seam-reverse.png",
+      "scrollY": 580
+    },
+    {
+      "name": "mobile",
+      "key": "profiles-complete",
+      "path": ".codex/visual-audit-2026-09-05/motion-mobile-profiles-complete.png",
+      "scrollY": 1074
+    },
+    {
+      "name": "mobile",
+      "key": "connect-rapid-customer",
+      "path": ".codex/visual-audit-2026-09-05/motion-mobile-connect-rapid-customer.png",
+      "scrollY": 3406
+    },
+    {
+      "name": "mobile",
+      "key": "n1-focused-premium",
+      "path": ".codex/visual-audit-2026-09-05/motion-mobile-n1-focused-premium.png",
+      "scrollY": 2736
+    },
+    {
+      "name": "desktop",
+      "key": "seam-forward",
+      "path": ".codex/visual-audit-2026-09-05/motion-desktop-seam-forward.png",
+      "scrollY": 700
+    },
+    {
+      "name": "desktop",
+      "key": "seam-reverse",
+      "path": ".codex/visual-audit-2026-09-05/motion-desktop-seam-reverse.png",
+      "scrollY": 700
+    },
+    {
+      "name": "desktop",
+      "key": "profiles-complete",
+      "path": ".codex/visual-audit-2026-09-05/motion-desktop-profiles-complete.png",
+      "scrollY": 1264
+    },
+    {
+      "name": "desktop",
+      "key": "connect-rapid-customer",
+      "path": ".codex/visual-audit-2026-09-05/motion-desktop-connect-rapid-customer.png",
+      "scrollY": 3724
+    }
+  ],
+  "n1": {
+    "focused": true,
+    "opacity": "0",
+    "scrollY": 2736,
+    "parent": {
+      "x": 22.307693481445312,
+      "y": 338,
+      "width": 315.3846435546875,
+      "height": 122.67901611328125,
+      "top": 338,
+      "right": 337.6923370361328,
+      "bottom": 460.67901611328125,
+      "left": 22.307693481445312
+    }
+  }
+}
